@@ -92,7 +92,16 @@ Tasks:
 **3. A simple local server**
 Stand up a minimal Flask app and have it serve that HTML page instead of
 opening the file directly.
-*Deliverable:* the page loads from `http://localhost:5000` in the browser.
+*Deliverable:* the page loads from `http://localhost:5001` in the browser
+(port 5001, not the usual 5000 — macOS's built-in AirPlay Receiver also
+listens on 5000, so we moved Flask to 5001 to avoid the conflict).
+
+Tasks:
+- [x] 3.1 Set up a Python virtual environment and install Flask; confirm `flask` is importable.
+- [x] 3.2 Write a minimal Flask app with one route (`/`) that returns a hardcoded string; confirm it responds at `http://localhost:5001`.
+- [x] 3.3 Serve `index.html` for real from that route instead of a hardcoded string.
+- [x] 3.4 Move `style.css` and `app.js` into Flask's expected static-file location so the styled, interactive page loads correctly over `localhost`, not just `file://`.
+- [x] 3.5 Fresh visit to `http://localhost:5001` confirms it matches the full section 3 deliverable.
 
 **4. APIs**
 Add a couple of Flask routes that return/accept JSON using fake, in-memory
@@ -100,6 +109,13 @@ data (a Python variable standing in for a database), and have the frontend
 JavaScript call them with `fetch()`.
 *Deliverable:* can hit an endpoint with `curl` and get JSON back, and the
 page updates from data that came from the server, not hardcoded in the HTML.
+
+Tasks:
+- [x] 4.1 Add a fake in-memory list of past entries in `app.py` and a `GET /api/entries` route that returns it as JSON; confirm with `curl`.
+- [x] 4.2 Add a `POST /api/entries` route that accepts a JSON body and appends it to the in-memory list; confirm with `curl` sending real JSON.
+- [x] 4.3 In `app.js`, `fetch()` `/api/entries` on page load and render the results into the page, proving the data came from the server, not hardcoded HTML.
+- [x] 4.4 Wire the submit button to `fetch()`-POST the form's real values as JSON to `/api/entries` instead of doing a default page-reload submission, then refresh the rendered list.
+- [x] 4.5 Fresh reload of `http://localhost:5001` confirms the full section 4 deliverable.
 
 **5. Database**
 Swap the in-memory fake data for real PostgreSQL tables (via SQLAlchemy)

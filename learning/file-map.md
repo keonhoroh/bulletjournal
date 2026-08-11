@@ -21,7 +21,10 @@ Update this whenever a file is added, removed, or finally understood.
 | `learning/plan.md` | parked | The locked tech-stack decisions (Python/Flask/Postgres/Render, etc.) and the 8-section build plan, each section ending in a concrete deliverable. |
 | `learning/knowledge-graph.md` | parked | The living map of what you actually know, one row per concept with a status (seed/introduced/practicing/understood). Drives what you get quizzed on. |
 | `learning/file-map.md` | parked | This file: what every file/folder in the repo is and why it exists. |
-| `index.html` | known | The app's first page (plan.md section 1, task 1.1): a minimal HTML skeleton with a `<title>` and one `<h1>` heading, opened directly in the browser with no server involved. |
+| `templates/index.html` | known | The app's page, served by Flask via `render_template()` (section 3). Now also has an empty `<ul id="entries-list">` (section 4, task 4.3) that `app.js` fills in client-side after fetching `/api/entries`. |
 | `.gitignore` | known | Tells Git which files to never track. Currently just `.DS_Store` (macOS Finder junk) so it never ends up in the GitHub history. |
-| `style.css` | known | External stylesheet linked from index.html's `<head>` (plan.md section 2, tasks 2.1-2.2): layout, spacing, fonts, and colors for the form. |
-| `app.js` | known | External script linked before `</body>` (plan.md section 2, tasks 2.3-2.4): live rating readout and habit-row highlighting via DOM manipulation and event listeners, no server involved. |
+| `static/style.css` | known | Stylesheet, moved into Flask's `static/` convention (plan.md section 3, task 3.4) so Flask auto-serves it at `/static/style.css`. Content unchanged from section 2. |
+| `static/app.js` | known | Script served from `/static/app.js`. `fetch()`es `/api/entries` on page load and renders results into `#entries-list` (4.3); also intercepts the form's submit event, POSTs its values as JSON, and re-renders the list (4.4). |
+| `venv/` | generated | This project's isolated Python environment (plan.md section 3, task 3.1): its own copy of the Python interpreter and pip, so installed packages (Flask, etc.) stay local to this project. Gitignored, never hand-edited. |
+| `requirements.txt` | generated | Exact list of installed Python packages + versions (plan.md section 3, task 3.1), written by `pip freeze`. Never hand-edited — regenerated the same way whenever dependencies change. |
+| `app.py` | known | The Flask server: `/` serves the real page (section 3); `/api/entries` (section 4, tasks 4.1-4.2) handles `GET` (list fake entries) and `POST` (append a new one) against an in-memory list. Run with `venv/bin/python app.py` on port 5001. |

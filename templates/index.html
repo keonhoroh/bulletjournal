@@ -2,12 +2,12 @@
 <html>
   <head>
     <title>bullet journal</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   </head>
   <body>
     <h1>it's good to see you.</h1>
 
-    <form>
+    <form id="journal-form">
       <label for="highlight">today's highlight</label>
       <input
         type="text"
@@ -56,6 +56,12 @@
 
       <button type="submit">submit entry</button>
     </form>
-    <script src="app.js"></script>
+
+    <section>
+      <h2>past entries</h2>
+      <ul id="entries-list"></ul>
+    </section>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
   </body>
 </html>

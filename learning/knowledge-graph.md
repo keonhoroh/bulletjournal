@@ -33,8 +33,8 @@ that time on `seed`/`introduced`/`practicing` concepts instead. Dates are
 | Classes & objects (Python OOP) | seed | — | — | — |
 | HTML elements & document structure | understood | 2026-08-10 | 2026-08-10 | Built index.html, made a real mistake (text placed outside `<title>`/`<h1>` tags, leaking into `<head>`), fixed it, and correctly explained: "everything under head is metadata for the browser and not user-facing data." |
 | CSS selectors & the box model | practicing | 2026-08-10 | 2026-08-10 | Wrote real style.css values themselves (font stack with fallback, `rgb()` color function); hit an invalid named-color value (`off-white`) firsthand and saw it get silently skipped rather than breaking the whole file, confirming lenient CSS parsing. |
-| JavaScript DOM manipulation | practicing | 2026-08-10 | 2026-08-10 | Correctly predicted the live rating readout and habit-row highlight before refreshing, then confirmed both worked on a fresh browser open of the real files. |
-| JavaScript event handling | practicing | 2026-08-10 | 2026-08-10 | Same evidence as DOM manipulation — predicted `input`/`change` listener behavior correctly ahead of running it. |
+| JavaScript DOM manipulation | practicing | 2026-08-11 | 2026-08-11 | Extended into `createElement`/`appendChild`/template literals (section 4.3) and reading form values (`highlightInput.value`, `ratingInput.value`) to build a real object for `fetch()` (section 4.4). |
+| JavaScript event handling | practicing | 2026-08-11 | 2026-08-11 | Correctly predicted `event.preventDefault()` would stop the Section-1 page-reload behavior on submit, then confirmed a new entry appended live with no reload. |
 | HTML forms & inputs (text/checkbox/number, label `for`/`id`) | practicing | 2026-08-10 | 2026-08-10 | Built the full form (highlight/habits/rating/button) themself; explained the `for`/`id` link mostly right, but thought a mismatch would break the checkbox itself rather than just the label's click-through — corrected. |
 
 ## Structural (how the pieces connect)
@@ -42,18 +42,18 @@ that time on `seed`/`introduced`/`practicing` concepts instead. Dates are
 | Concept | Status | Introduced | Last reviewed | Evidence |
 |---|---|---|---|---|
 | Client-server architecture | introduced | 2026-08-10 | 2026-08-10 | Explained frontend (runs in browser) vs. backend (runs on a remote always-on server) during core-components walkthrough. |
-| API (frontend↔backend contract) | introduced | 2026-08-10 | 2026-08-10 | Defined as "the fixed menu of requests the frontend is allowed to make to the backend." |
-| HTTP methods & JSON | seed | — | — | — |
+| API (frontend↔backend contract) | practicing | 2026-08-11 | 2026-08-11 | Wrote the template literal that renders `fetch("/api/entries")`'s response into the page themself; correctly predicted 3 list items would appear, then confirmed live in the browser. |
+| HTTP methods & JSON | practicing | 2026-08-11 | 2026-08-11 | Correctly predicted a `POST` would return the new entry with status `201`, ran the real `curl -X POST` command themself, then confirmed via a follow-up `GET` that it actually got appended server-side. |
 | Default form submission (GET reload + query string, no JS) | introduced | 2026-08-10 | 2026-08-10 | Predicted "nothing happens" on submit click; actual result was a page reload with field values appended to the URL as a query string — explained as the reason sections 3/4 (server + fetch API) exist. |
-| Routing (URL → code) | seed | — | — | — |
+| Routing (URL → code) | practicing | 2026-08-11 | 2026-08-11 | Wrote and ran a real `@app.route("/")` view function, correctly predicted it would respond on port 5001 (after we hit a real macOS AirPlay-vs-port-5000 conflict on the first attempt), confirmed in browser. |
 | Files talking to each other (imports/modules) | seed | — | — | — |
-| Dependency management (pip, requirements.txt) | seed | — | — | — |
-| Virtual environments | seed | — | — | — |
-| Project folder structure | seed | — | — | — |
+| Dependency management (pip, requirements.txt) | introduced | 2026-08-11 | 2026-08-11 | Explained why `pip install flask` pulled in 7 packages, not 1 (Flask's own dependencies), and generated requirements.txt via `pip freeze`. |
+| Virtual environments | practicing | 2026-08-11 | 2026-08-11 | Created `venv/` themself; wrongly predicted "nothing new on disk" twice (once for venv creation, once for pip install) before seeing the real files, then correctly predicted `import flask` would print its version. |
+| Project folder structure | practicing | 2026-08-11 | 2026-08-11 | Completed the full Flask `templates/` + `static/` split themself: moved index.html into templates/, moved style.css + app.js into static/, used `url_for('static', ...)` in the template, and confirmed the fully styled page loads live over localhost. |
 | Database | introduced | 2026-08-10 | 2026-08-10 | Defined as permanent structured storage; explained why the app needs it (data must survive a restart). |
 | ORM (SQLAlchemy) | introduced | 2026-08-10 | 2026-08-10 | Defined as "the standard Python library for talking to a database using Python code instead of raw SQL." |
 | Database schema / tables | seed | — | — | — |
-| Persistence (data survives a restart) | seed | — | — | — |
+| Persistence (data survives a restart) | introduced | 2026-08-11 | 2026-08-11 | Explained that the POSTed entry only survives because the server process hasn't restarted — it's an in-memory Python list, not written to disk, which is why Section 5's real database exists. |
 
 ## Engineering practice
 
@@ -72,7 +72,7 @@ that time on `seed`/`introduced`/`practicing` concepts instead. Dates are
 | Authorization (scoping data to the right user) | seed | — | — | — |
 | Deployment / hosting (concept) | introduced | 2026-08-10 | 2026-08-10 | Explained as running the app on always-on servers reachable at a public address, vs. only on a laptop. |
 | Production server vs. dev server (Gunicorn) | introduced | 2026-08-10 | 2026-08-10 | Explained that Flask's built-in server isn't for production and Gunicorn is the standard replacement. |
-| Flask as a microframework | introduced | 2026-08-10 | 2026-08-10 | Explained as starting minimal and adding pieces (DB, login, etc.) one at a time, understanding each. |
+| Flask as a microframework | practicing | 2026-08-11 | 2026-08-11 | Ran a real minimal Flask app (one route, hardcoded response) end to end via `venv/bin/python app.py`, not just discussed conceptually. |
 | Code review / reading a diff | seed | — | — | — |
 | Writing clear commit messages | seed | — | — | — |
 
