@@ -83,11 +83,11 @@ JavaScript, no backend yet.
 a local file.
 
 Tasks:
-- [ ] 2.1 Link an external `style.css` and apply basic layout/spacing so the form no longer looks like plain unstyled text.
-- [ ] 2.2 Style the inputs/checkboxes/labels so the page reads as one cohesive form (fonts, spacing, a visible "checked" state).
-- [ ] 2.3 Link an external `app.js`; add a live rating readout that updates as the rating input changes.
-- [ ] 2.4 Add JS that visibly highlights a habit row when its checkbox is toggled.
-- [ ] 2.5 Fresh open of the saved files in the browser confirms it matches the full section 2 deliverable.
+- [x] 2.1 Link an external `style.css` and apply basic layout/spacing so the form no longer looks like plain unstyled text.
+- [x] 2.2 Style the inputs/checkboxes/labels so the page reads as one cohesive form (fonts, spacing, a visible "checked" state).
+- [x] 2.3 Link an external `app.js`; add a live rating readout that updates as the rating input changes.
+- [x] 2.4 Add JS that visibly highlights a habit row when its checkbox is toggled.
+- [x] 2.5 Fresh open of the saved files in the browser confirms it matches the full section 2 deliverable.
 
 **3. A simple local server**
 Stand up a minimal Flask app and have it serve that HTML page instead of

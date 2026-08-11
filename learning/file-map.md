@@ -22,3 +22,6 @@ Update this whenever a file is added, removed, or finally understood.
 | `learning/knowledge-graph.md` | parked | The living map of what you actually know, one row per concept with a status (seed/introduced/practicing/understood). Drives what you get quizzed on. |
 | `learning/file-map.md` | parked | This file: what every file/folder in the repo is and why it exists. |
 | `index.html` | known | The app's first page (plan.md section 1, task 1.1): a minimal HTML skeleton with a `<title>` and one `<h1>` heading, opened directly in the browser with no server involved. |
+| `.gitignore` | known | Tells Git which files to never track. Currently just `.DS_Store` (macOS Finder junk) so it never ends up in the GitHub history. |
+| `style.css` | known | External stylesheet linked from index.html's `<head>` (plan.md section 2, tasks 2.1-2.2): layout, spacing, fonts, and colors for the form. |
+| `app.js` | known | External script linked before `</body>` (plan.md section 2, tasks 2.3-2.4): live rating readout and habit-row highlighting via DOM manipulation and event listeners, no server involved. |

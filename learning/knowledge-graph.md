@@ -32,9 +32,9 @@ that time on `seed`/`introduced`/`practicing` concepts instead. Dates are
 | String formatting (f-strings) | seed | — | — | — |
 | Classes & objects (Python OOP) | seed | — | — | — |
 | HTML elements & document structure | understood | 2026-08-10 | 2026-08-10 | Built index.html, made a real mistake (text placed outside `<title>`/`<h1>` tags, leaking into `<head>`), fixed it, and correctly explained: "everything under head is metadata for the browser and not user-facing data." |
-| CSS selectors & the box model | seed | — | — | — |
-| JavaScript DOM manipulation | seed | — | — | — |
-| JavaScript event handling | seed | — | — | — |
+| CSS selectors & the box model | practicing | 2026-08-10 | 2026-08-10 | Wrote real style.css values themselves (font stack with fallback, `rgb()` color function); hit an invalid named-color value (`off-white`) firsthand and saw it get silently skipped rather than breaking the whole file, confirming lenient CSS parsing. |
+| JavaScript DOM manipulation | practicing | 2026-08-10 | 2026-08-10 | Correctly predicted the live rating readout and habit-row highlight before refreshing, then confirmed both worked on a fresh browser open of the real files. |
+| JavaScript event handling | practicing | 2026-08-10 | 2026-08-10 | Same evidence as DOM manipulation — predicted `input`/`change` listener behavior correctly ahead of running it. |
 | HTML forms & inputs (text/checkbox/number, label `for`/`id`) | practicing | 2026-08-10 | 2026-08-10 | Built the full form (highlight/habits/rating/button) themself; explained the `for`/`id` link mostly right, but thought a mismatch would break the checkbox itself rather than just the label's click-through — corrected. |
 
 ## Structural (how the pieces connect)
@@ -59,8 +59,8 @@ that time on `seed`/`introduced`/`practicing` concepts instead. Dates are
 
 | Concept | Status | Introduced | Last reviewed | Evidence |
 |---|---|---|---|---|
-| Source control (Git & GitHub) | introduced | 2026-08-10 | 2026-08-10 | Explained Git as tracked change history and GitHub as its online host/backup, framed as non-negotiable from day one. |
-| Git commit (a saved unit of change) | seed | — | — | — |
+| Source control (Git & GitHub) | practicing | 2026-08-10 | 2026-08-10 | Created a GitHub repo, correctly predicted `git remote add` + `git push -u` would connect and push to it (slightly off on the remote-add step, corrected), then ran both and confirmed the push live on GitHub. |
+| Git commit (a saved unit of change) | practicing | 2026-08-10 | 2026-08-10 | Made the repo's first real commit (index.html + learning/ + .gitignore) after I explained staging vs. committing; ran `git add`/`git commit` and saw `git status` confirm it. |
 | Git branches | seed | — | — | — |
 | .gitignore | seed | — | — | — |
 | Automated testing (concept) | introduced | 2026-08-10 | 2026-08-10 | Explained via the plan's testing section: write tests for core flows, then deliberately break something to see a test fail. |

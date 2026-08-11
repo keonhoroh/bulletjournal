@@ -1,0 +1,52 @@
+body {
+  font-family: "Berkeley Mono", monospace;
+  max-width: 480px;
+  margin: 40px auto;
+  padding: 0 20px;
+  background-color:white;
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+label {
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+fieldset {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 12px;
+}
+
+.habit-row {
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.habit-row.checked {
+  background-color: #d9f2d0;
+}
+
+button {
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  background-color: rgb(0, 17, 255);
+}
