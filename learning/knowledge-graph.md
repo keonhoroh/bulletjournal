@@ -28,7 +28,7 @@ that time on `seed`/`introduced`/`practicing` concepts instead. Dates are
 | Conditionals (if / elif / else) | seed | — | — | — |
 | Loops (for / while) | seed | — | — | — |
 | Lists | seed | — | — | — |
-| Dictionaries | seed | — | — | — |
+| Dictionaries | practicing | 2026-08-12 | 2026-08-12 | Learned `data["date"]`-style key lookup (framed via the JS object equivalent they already knew), then wrote all four `data["..."]` lookups themself in the `Entry(...)` call in app.py. |
 | String formatting (f-strings) | seed | — | — | — |
 | Classes & objects (Python OOP) | seed | — | — | — |
 | HTML elements & document structure | understood | 2026-08-10 | 2026-08-10 | Built index.html, made a real mistake (text placed outside `<title>`/`<h1>` tags, leaking into `<head>`), fixed it, and correctly explained: "everything under head is metadata for the browser and not user-facing data." |
@@ -46,14 +46,14 @@ that time on `seed`/`introduced`/`practicing` concepts instead. Dates are
 | HTTP methods & JSON | practicing | 2026-08-11 | 2026-08-11 | Correctly predicted a `POST` would return the new entry with status `201`, ran the real `curl -X POST` command themself, then confirmed via a follow-up `GET` that it actually got appended server-side. |
 | Default form submission (GET reload + query string, no JS) | introduced | 2026-08-10 | 2026-08-10 | Predicted "nothing happens" on submit click; actual result was a page reload with field values appended to the URL as a query string — explained as the reason sections 3/4 (server + fetch API) exist. |
 | Routing (URL → code) | practicing | 2026-08-11 | 2026-08-11 | Wrote and ran a real `@app.route("/")` view function, correctly predicted it would respond on port 5001 (after we hit a real macOS AirPlay-vs-port-5000 conflict on the first attempt), confirmed in browser. |
-| Files talking to each other (imports/modules) | seed | — | — | — |
+| Files talking to each other (imports/modules) | introduced | 2026-08-12 | 2026-08-12 | Saw `from app import app, db` import our own app.py as a module from a one-off setup command, same mechanism as importing an external package like Flask. |
 | Dependency management (pip, requirements.txt) | introduced | 2026-08-11 | 2026-08-11 | Explained why `pip install flask` pulled in 7 packages, not 1 (Flask's own dependencies), and generated requirements.txt via `pip freeze`. |
 | Virtual environments | practicing | 2026-08-11 | 2026-08-11 | Created `venv/` themself; wrongly predicted "nothing new on disk" twice (once for venv creation, once for pip install) before seeing the real files, then correctly predicted `import flask` would print its version. |
 | Project folder structure | practicing | 2026-08-11 | 2026-08-11 | Completed the full Flask `templates/` + `static/` split themself: moved index.html into templates/, moved style.css + app.js into static/, used `url_for('static', ...)` in the template, and confirmed the fully styled page loads live over localhost. |
-| Database | introduced | 2026-08-10 | 2026-08-10 | Defined as permanent structured storage; explained why the app needs it (data must survive a restart). |
-| ORM (SQLAlchemy) | introduced | 2026-08-10 | 2026-08-10 | Defined as "the standard Python library for talking to a database using Python code instead of raw SQL." |
-| Database schema / tables | seed | — | — | — |
-| Persistence (data survives a restart) | introduced | 2026-08-11 | 2026-08-11 | Explained that the POSTed entry only survives because the server process hasn't restarted — it's an in-memory Python list, not written to disk, which is why Section 5's real database exists. |
+| Database | practicing | 2026-08-11 | 2026-08-11 | Installed real PostgreSQL locally and created a dedicated `bulletjournaldb` database; predicted (reasonably, if not quite precisely) that it would "appear on disk," then saw it actually lives in Postgres's own private data directory, not the project folder — confirmed only via `psql -l`. |
+| ORM (SQLAlchemy) | practicing | 2026-08-11 | 2026-08-12 | Installed Flask-SQLAlchemy + psycopg2-binary and configured `db = SQLAlchemy(app)` in app.py, wired to a real Postgres database via SQLALCHEMY_DATABASE_URI. Then wrote real `Entry(date=data["date"], ...)`, `db.session.add()`/`commit()`, and `Entry.query.all()` themself to replace the fake list; correctly connected `db.session.add`/`commit` to the git `add`/`commit` staging analogy after an initial wrong prediction about the entry being stuck "in a queue," then confirmed it with a real POST+GET round trip through curl. |
+| Database schema / tables | practicing | 2026-08-12 | 2026-08-12 | Defined a real `Entry` model (columns, types, primary key), correctly reasoned that defining the class alone wasn't enough to create the table, then ran `db.create_all()` and confirmed the real columns via `psql \d entry`. Repeated the pattern independently for a new `User` model (correctly wrote `unique=True` on `username` unprompted), correctly predicted `db.create_all()` would only add the new table and leave `Entry`'s existing rows untouched, then confirmed both via `psql`. |
+| Persistence (data survives a restart) | understood | 2026-08-11 | 2026-08-12 | Correctly predicted a saved entry would survive a full kill-and-restart of the Flask process "because the data lives in our database now," then confirmed it live: both a curl-inserted entry and an earlier form-submitted entry were still there after the process was fully torn down and rebuilt. |
 
 ## Engineering practice
 
@@ -65,9 +65,9 @@ that time on `seed`/`introduced`/`practicing` concepts instead. Dates are
 | .gitignore | seed | — | — | — |
 | Automated testing (concept) | introduced | 2026-08-10 | 2026-08-10 | Explained via the plan's testing section: write tests for core flows, then deliberately break something to see a test fail. |
 | pytest (tool) | seed | — | — | Named as the tool of choice in locked decisions; not yet explained. |
-| Environment variables & secrets management | introduced | 2026-08-10 | 2026-08-10 | Explained as keeping passwords/API keys out of code and Git history, config differing per environment. |
+| Environment variables & secrets management | practicing | 2026-08-11 | 2026-08-11 | Wrote/saw the real `os.environ.get("DATABASE_URL", <local default>)` pattern in app.py and correctly predicted it wouldn't error locally (no env var set, falls back to the default) — this is the exact mechanism Render will use in Section 8. |
 | Authentication (concept) | introduced | 2026-08-10 | 2026-08-10 | Explained as verifying who a user is and keeping their data private from other users. |
-| Password hashing | seed | — | — | — |
+| Password hashing | introduced | 2026-08-12 | 2026-08-12 | Explained as a one-way scrambling function (can't be reversed back into the real password) while sizing the `password_hash` column on `User`; not yet actually generated/checked a hash in code (that's task 6.2). |
 | Sessions & cookies | seed | — | — | — |
 | Authorization (scoping data to the right user) | seed | — | — | — |
 | Deployment / hosting (concept) | introduced | 2026-08-10 | 2026-08-10 | Explained as running the app on always-on servers reachable at a public address, vs. only on a laptop. |

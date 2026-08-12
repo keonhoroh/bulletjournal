@@ -46,6 +46,10 @@ multiple users hitting it at once correctly, which a simpler file-based
 database isn't built for. Using the same database locally and in production
 avoids a second set of "why does this work on my laptop but not live" bugs.
 
+Local dev setup (section 5): PostgreSQL 16 installed via Homebrew, running as
+a local server process; the project's dedicated local database is named
+`bulletjournaldb`.
+
 ### 5. Hosting: Render
 A hosting platform with a large beginner community and straightforward,
 well-documented support for exactly this combination (Flask + Postgres),
@@ -123,12 +127,28 @@ for entries and habits.
 *Deliverable:* restart the Flask server and the previously saved entry is
 still there — proof it's persisted, not just held in memory.
 
+Tasks:
+- [x] 5.1 Install PostgreSQL locally (Homebrew) and start it as a background service; confirm you can connect with `psql`.
+- [x] 5.2 Create a dedicated local database for this project.
+- [x] 5.3 Install Flask-SQLAlchemy + psycopg2 in the venv and configure `app.py` to connect to that database.
+- [x] 5.4 Define a SQLAlchemy `Entry` model and create the real table; confirm it exists in the database.
+- [x] 5.5 Replace the in-memory `ENTRIES` list in the `GET`/`POST` `/api/entries` routes with real database queries.
+- [x] 5.6 Fully restart the Flask server and confirm a previously saved entry is still there — proof of real persistence.
+
 **6. Core features + accounts**
 Wire up the full MVP: sign up / log in, log today's highlight/habits/rating,
 and view the history list — all against the real database, all scoped to
 the logged-in user.
 *Deliverable:* two different test accounts, logged in locally, each seeing
 only their own journal.
+
+Tasks:
+- [x] 6.1 Define a `User` model (username, hashed-password column) and create the real table.
+- [ ] 6.2 Install Flask-Login; build sign-up: a route + form that hashes the password (Werkzeug) and saves a new `User`.
+- [ ] 6.3 Build login: Flask-Login session setup (`LoginManager`, `user_loader`) plus a login route/form.
+- [ ] 6.4 Add logout, and protect routes: require login for the journal page and `/api/entries` (redirect to login otherwise).
+- [ ] 6.5 Scope entries to the user: add a `user_id` link on `Entry`, and filter/save `/api/entries` by the logged-in user only.
+- [ ] 6.6 Full deliverable check: create two real accounts in the browser and confirm each sees only their own entries.
 
 **7. Tests**
 Write automated tests (pytest) for the core flows — saving an entry works,

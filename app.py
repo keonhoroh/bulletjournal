@@ -1,21 +1,27 @@
+import os
+
 from flask import Flask, render_template, jsonify, request
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+    "DATABASE_URL", "postgresql://localhost/bulletjournaldb"
+)
+db = SQLAlchemy(app)
 
-ENTRIES = [
-    {
-        "date": "2026-08-09",
-        "highlight": "played soccer early morning",
-        "rating": 7.2,
-        "habits": ["exercise", "read 10 pages"],
-    },
-    {
-        "date": "2026-08-10",
-        "highlight": "watched new spider-man with friends",
-        "rating": 6.7,
-        "habits": ["15 min stretch", "exercise"],
-    },
-]
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), nullable=False, unique=True)
+    password_hash = db.Column(db.String(200), nullable=False)
+
+
+class Entry(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String(10), nullable=False)
+    highlight = db.Column(db.String(200), nullable=False)
+    rating = db.Column(db.Float, nullable=False)
+    habits = db.Column(db.JSON, nullable=False)
 
 
 @app.route("/")
@@ -26,10 +32,27 @@ def home():
 @app.route("/api/entries", methods=["GET", "POST"])
 def entries():
     if request.method == "POST":
-        new_entry = request.get_json()
-        ENTRIES.append(new_entry)
-        return jsonify(new_entry), 201
-    return jsonify(ENTRIES)
+        data = request.get_json()
+        new_entry = Entry(
+            date = data["date"],
+            highlight = data["highlight"],
+            rating = data["rating"],
+            habits = data["habits"]
+        )
+        db.session.add(new_entry)
+        db.session.commit()
+        return jsonify(data), 201
+
+    all_entries = Entry.query.all()
+    result = []
+    for entry in all_entries:
+        result.append({
+            "date": entry.date,
+            "highlight": entry.highlight,
+            "rating": entry.rating,
+            "habits": entry.habits
+        })
+    return jsonify(result)
 
 
 if __name__ == "__main__":
