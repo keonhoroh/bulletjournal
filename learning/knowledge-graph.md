@@ -67,7 +67,7 @@ that time on `seed`/`introduced`/`practicing` concepts instead. Dates are
 | pytest (tool) | seed | — | — | Named as the tool of choice in locked decisions; not yet explained. |
 | Environment variables & secrets management | practicing | 2026-08-11 | 2026-08-11 | Wrote/saw the real `os.environ.get("DATABASE_URL", <local default>)` pattern in app.py and correctly predicted it wouldn't error locally (no env var set, falls back to the default) — this is the exact mechanism Render will use in Section 8. |
 | Authentication (concept) | introduced | 2026-08-10 | 2026-08-10 | Explained as verifying who a user is and keeping their data private from other users. |
-| Password hashing | introduced | 2026-08-12 | 2026-08-12 | Explained as a one-way scrambling function (can't be reversed back into the real password) while sizing the `password_hash` column on `User`; not yet actually generated/checked a hash in code (that's task 6.2). |
+| Password hashing | practicing | 2026-08-12 | 2026-08-12 | Wrote `password_hash=generate_password_hash(password)` themself in a real `/signup` route, submitted a real password via curl, and confirmed in `psql` that only a long scrambled string was stored, never the raw password. Initially called it "encrypted" rather than "hashed"; corrected on the reversible-vs-irreversible distinction. |
 | Sessions & cookies | seed | — | — | — |
 | Authorization (scoping data to the right user) | seed | — | — | — |
 | Deployment / hosting (concept) | introduced | 2026-08-10 | 2026-08-10 | Explained as running the app on always-on servers reachable at a public address, vs. only on a laptop. |

@@ -1,7 +1,8 @@
 import os
 
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
@@ -27,6 +28,21 @@ class Entry(db.Model):
 @app.route("/")
 def home():
     return render_template("index.html")
+
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        new_user = User(
+            username=username,
+            password_hash=generate_password_hash(password),
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for("home"))
+    return render_template("signup.html")
 
 
 @app.route("/api/entries", methods=["GET", "POST"])
