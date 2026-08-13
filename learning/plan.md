@@ -145,9 +145,9 @@ only their own journal.
 Tasks:
 - [x] 6.1 Define a `User` model (username, hashed-password column) and create the real table.
 - [x] 6.2 Install Flask-Login; build sign-up: a route + form that hashes the password (Werkzeug) and saves a new `User`.
-- [ ] 6.3 Build login: Flask-Login session setup (`LoginManager`, `user_loader`) plus a login route/form.
-- [ ] 6.4 Add logout, and protect routes: require login for the journal page and `/api/entries` (redirect to login otherwise).
-- [ ] 6.5 Scope entries to the user: add a `user_id` link on `Entry`, and filter/save `/api/entries` by the logged-in user only.
+- [x] 6.3 Build login: Flask-Login session setup (`LoginManager`, `user_loader`) plus a login route/form.
+- [x] 6.4 Add logout, and protect routes: require login for the journal page and `/api/entries` (redirect to login otherwise).
+- [x] 6.5 Scope entries to the user: add a `user_id` link on `Entry`, and filter/save `/api/entries` by the logged-in user only.
 - [ ] 6.6 Full deliverable check: create two real accounts in the browser and confirm each sees only their own entries.
 
 **7. Tests**
