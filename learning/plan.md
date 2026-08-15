@@ -148,7 +148,7 @@ Tasks:
 - [x] 6.3 Build login: Flask-Login session setup (`LoginManager`, `user_loader`) plus a login route/form.
 - [x] 6.4 Add logout, and protect routes: require login for the journal page and `/api/entries` (redirect to login otherwise).
 - [x] 6.5 Scope entries to the user: add a `user_id` link on `Entry`, and filter/save `/api/entries` by the logged-in user only.
-- [ ] 6.6 Full deliverable check: create two real accounts in the browser and confirm each sees only their own entries.
+- [x] 6.6 Full deliverable check: create two real accounts in the browser and confirm each sees only their own entries.
 
 **7. Tests**
 Write automated tests (pytest) for the core flows — saving an entry works,
@@ -156,6 +156,13 @@ one user can't see another user's data — runnable with a single command.
 *Deliverable:* the test suite passes; then deliberately break something and
 watch the relevant test fail, as proof the tests are actually checking
 something.
+
+Tasks:
+- [x] 7.1 Install pytest; create a dedicated `bulletjournaldb_test` database and a `tests/conftest.py` fixture (test client + fresh tables per test).
+- [x] 7.2 Write a test that posting a new entry while logged in actually saves it and it comes back via `GET`.
+- [ ] 7.3 Write a test that one logged-in user never sees another user's entries.
+- [ ] 7.4 Run the full suite with one command and confirm both tests pass.
+- [ ] 7.5 Deliberately break the user-scoping filter, watch the relevant test fail, then revert and confirm it passes again.
 
 **8. Live deployment**
 Deploy the app to Render, running under Gunicorn, connected to a hosted
