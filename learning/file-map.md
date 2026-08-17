@@ -32,4 +32,5 @@ Update this whenever a file is added, removed, or finally understood.
 | `templates/login.html` | known | The login page: a plain (non-JS) form POSTing username/password to `/login` (section 6, task 6.3). |
 | `tests/` | known | Home for the automated test suite (section 7); run with `venv/bin/python -m pytest` from the project root. |
 | `tests/conftest.py` | known | Shared pytest fixture (`client`): points the app at a separate `bulletjournaldb_test` database, creates fresh tables before each test and drops them after, and hands tests a Flask test client (task 7.1). |
-| `tests/test_entries.py` | known | `test_posting_an_entry_saves_it` (task 7.2): signs up + logs in a test user, POSTs a new entry, and asserts it comes back via GET. |
+| `tests/test_entries.py` | known | `test_posting_an_entry_saves_it` (task 7.2): signs up + logs in a test user, POSTs a new entry, and asserts it comes back via GET. `test_user_cannot_see_another_users_entries` (task 7.3): alice saves an entry, logs out, bob logs in, and asserts bob's entries list is empty — proven to actually catch bugs by temporarily removing the `filter_by` in app.py and watching it fail (task 7.5). |
+| `Procfile` | known | Tells Render the exact command to start the app in production: `web: gunicorn app:app` (section 8, task 8.2). |

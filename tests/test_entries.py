@@ -15,3 +15,19 @@ def test_posting_an_entry_saves_it(client):
 
     entries = client.get("/api/entries").get_json()
     assert entries[0]["highlight"] == "Learned about Flask testing!"
+
+
+def test_user_cannot_see_another_users_entries(client):
+    signup_and_login(client, "alice", "alicepass123")
+    response = client.post("/api/entries", json={
+        "date": "2024-08-17",
+        "highlight": "tested the db",
+        "rating": 5,
+        "habits": ["exercise", "read"]
+    })
+
+    client.post("/logout")
+
+    signup_and_login(client, "bob", "bobpass123")
+    entries = client.get("/api/entries").get_json()
+    assert entries == []

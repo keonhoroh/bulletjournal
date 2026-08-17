@@ -160,9 +160,9 @@ something.
 Tasks:
 - [x] 7.1 Install pytest; create a dedicated `bulletjournaldb_test` database and a `tests/conftest.py` fixture (test client + fresh tables per test).
 - [x] 7.2 Write a test that posting a new entry while logged in actually saves it and it comes back via `GET`.
-- [ ] 7.3 Write a test that one logged-in user never sees another user's entries.
-- [ ] 7.4 Run the full suite with one command and confirm both tests pass.
-- [ ] 7.5 Deliberately break the user-scoping filter, watch the relevant test fail, then revert and confirm it passes again.
+- [x] 7.3 Write a test that one logged-in user never sees another user's entries.
+- [x] 7.4 Run the full suite with one command and confirm both tests pass.
+- [x] 7.5 Deliberately break the user-scoping filter, watch the relevant test fail, then revert and confirm it passes again.
 
 **8. Live deployment**
 Deploy the app to Render, running under Gunicorn, connected to a hosted
@@ -170,3 +170,10 @@ Postgres database, with secrets (DB password, etc.) set as environment
 variables rather than in the code.
 *Deliverable:* a real public URL, reachable from a phone on a different
 network, with my own account and real entries in it.
+
+Tasks:
+- [x] 8.1 Install Gunicorn in the venv; confirm the app runs locally via `gunicorn app:app` instead of `python app.py`.
+- [x] 8.2 Add a `Procfile` telling Render how to start the app; regenerate `requirements.txt` so Gunicorn is included; commit and push.
+- [ ] 8.3 Create a Render account, a hosted Postgres database on Render, and a Web Service connected to this GitHub repo.
+- [ ] 8.4 Set `DATABASE_URL` and `SECRET_KEY` as real environment variables in Render's dashboard (not in code); confirm the deploy succeeds and the app loads at its public URL.
+- [ ] 8.5 Full deliverable check: sign up for a real account on the live URL from your phone (different network than your laptop), save a real entry, confirm it's there.
