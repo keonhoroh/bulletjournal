@@ -26,6 +26,12 @@ fundamentals I actually want to see working. Plain HTML/CSS/JS is the
 default starting point almost every "learn web dev" path uses before adding
 a framework.
 
+**Update (section 9):** once the MVP (sections 1–8) was fully working, the
+goal shifted from "learn the fundamentals" to "make this portfolio-ready,"
+so Tailwind CSS (a utility-class CSS framework, not a JS framework like
+React) was deliberately added for the visual redesign. HTML/JS stay plain —
+this only changes how styling is written.
+
 ### 3. Backend: Flask
 The most beginner-documented Python web framework — its official tutorial
 literally walks through building an accounts + database-backed app, which is
@@ -174,6 +180,35 @@ network, with my own account and real entries in it.
 Tasks:
 - [x] 8.1 Install Gunicorn in the venv; confirm the app runs locally via `gunicorn app:app` instead of `python app.py`.
 - [x] 8.2 Add a `Procfile` telling Render how to start the app; regenerate `requirements.txt` so Gunicorn is included; commit and push.
-- [ ] 8.3 Create a Render account, a hosted Postgres database on Render, and a Web Service connected to this GitHub repo.
-- [ ] 8.4 Set `DATABASE_URL` and `SECRET_KEY` as real environment variables in Render's dashboard (not in code); confirm the deploy succeeds and the app loads at its public URL.
-- [ ] 8.5 Full deliverable check: sign up for a real account on the live URL from your phone (different network than your laptop), save a real entry, confirm it's there.
+- [x] 8.3 Create a Render account, a hosted Postgres database on Render, and a Web Service connected to this GitHub repo.
+- [x] 8.4 Set `DATABASE_URL` and `SECRET_KEY` as real environment variables in Render's dashboard (not in code); confirm the deploy succeeds and the app loads at its public URL.
+- [x] 8.5 Full deliverable check: sign up for a real account on the live URL from your phone (different network than your laptop), save a real entry, confirm it's there.
+
+**9. Visual redesign (Tailwind CSS, responsive)**
+Rebuild the frontend's look using Tailwind CSS, a utility-class CSS
+framework, with a real build step (not the CDN prototyping version), so the
+app looks like a professional, portfolio-ready product on both mobile and
+desktop.
+*Deliverable:* the same journal + login/signup flow, now visually polished
+and responsive, checked in the browser at both a phone-sized and
+desktop-sized viewport.
+
+Tasks:
+- [x] 9.1 Set up the Tailwind build toolchain (`npm init`, install Tailwind, a config file, an input/output CSS file) and wire Flask to serve the generated CSS.
+- [ ] 9.2 Redesign `index.html` (the journal page) with Tailwind utility classes: layout, spacing, typography, a real visual hierarchy.
+- [ ] 9.3 Redesign `login.html` and `signup.html` to match, and add a link between them (the gap we noticed after section 8).
+- [ ] 9.4 Make the layout responsive: confirm it looks right at a narrow (phone) width and a wide (desktop) width using the browser's device toolbar.
+- [ ] 9.5 Polish pass: favicon, page titles, consistent spacing/colors across all three pages, loading/empty states for the entries list.
+
+**10. New features (edit/delete entries, ratings chart)**
+Extend the MVP's feature set past pure create/read: let users edit or delete
+a past entry, and see their ratings over time as a simple chart.
+*Deliverable:* from the live Render deployment, edit an existing entry,
+delete another, and see a real chart update to reflect the change.
+
+Tasks:
+- [ ] 10.1 Add `PUT`/`DELETE /api/entries/<id>` routes (scoped to the logged-in user, same pattern as existing routes); confirm with `curl`.
+- [ ] 10.2 Add edit/delete controls to the frontend entries list, wired to those routes with `fetch()`.
+- [ ] 10.3 Add a simple chart (ratings over time) to the journal page, populated from the same `/api/entries` data already being fetched.
+- [ ] 10.4 Write pytest tests for the new edit/delete routes, including that a user can't edit/delete another user's entry (same pattern as section 7).
+- [ ] 10.5 Redeploy to Render (push to GitHub, confirm auto-deploy); full deliverable check on the live URL.
