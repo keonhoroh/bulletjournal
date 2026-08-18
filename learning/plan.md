@@ -195,8 +195,8 @@ desktop-sized viewport.
 
 Tasks:
 - [x] 9.1 Set up the Tailwind build toolchain (`npm init`, install Tailwind, a config file, an input/output CSS file) and wire Flask to serve the generated CSS.
-- [ ] 9.2 Redesign `index.html` (the journal page) with Tailwind utility classes: layout, spacing, typography, a real visual hierarchy.
-- [ ] 9.3 Redesign `login.html` and `signup.html` to match, and add a link between them (the gap we noticed after section 8).
+- [x] 9.2 Redesign `index.html` (the journal page) with Tailwind utility classes: layout, spacing, typography, a real visual hierarchy.
+- [x] 9.3 Redesign `login.html` and `signup.html` to match, and add a link between them (the gap we noticed after section 8).
 - [ ] 9.4 Make the layout responsive: confirm it looks right at a narrow (phone) width and a wide (desktop) width using the browser's device toolbar.
 - [ ] 9.5 Polish pass: favicon, page titles, consistent spacing/colors across all three pages, loading/empty states for the entries list.
 

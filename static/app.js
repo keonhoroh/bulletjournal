@@ -23,6 +23,7 @@ async function loadEntries() {
   list.innerHTML = "";
   entries.forEach(function (entry) {
     const item = document.createElement("li");
+    item.className = "bg-white rounded-lg shadow-sm px-4 py-3 text-sm";
     item.textContent = `${entry.date}: ${entry.highlight} (${entry.rating})`;
     list.appendChild(item);
   });

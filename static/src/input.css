@@ -1,1 +1,5 @@
 @import "tailwindcss";
+
+.habit-row.checked {
+  @apply bg-indigo-50 ring-1 ring-indigo-300;
+}

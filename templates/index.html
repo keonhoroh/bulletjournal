@@ -1,66 +1,129 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>bullet journal</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
   </head>
-  <body>
-    <h1>it's good to see you.</h1>
+  <body class="bg-gray-50 min-h-screen text-gray-900">
+    <div class="max-w-2xl mx-auto px-4 py-10">
+      <div class="flex items-center justify-between mb-8">
+        <h1 class="text-3xl font-bold">it's good to see you.</h1>
+        <a href="/logout" class="text-sm text-gray-500 hover:text-gray-800"
+          >log out</a
+        >
+      </div>
 
-    <form id="journal-form">
-      <label for="highlight">today's highlight</label>
-      <input
-        type="text"
-        id="highlight"
-        value="watched new spider-man with friends"
-      />
-
-      <fieldset>
-        <legend>daily checklist</legend>
-        <div class="habit-row">
-          <input type="checkbox" id="habit1" />
-          <label for="habit1">15 min stretch</label>
+      <form
+        id="journal-form"
+        class="bg-white rounded-xl shadow-sm p-6 space-y-6"
+      >
+        <div>
+          <label
+            for="highlight"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >today's highlight</label
+          >
+          <input
+            type="text"
+            id="highlight"
+            value="watched new spider-man with friends"
+            class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
         </div>
 
-        <div class="habit-row">
-          <input type="checkbox" id="habit2" />
-          <label for="habit2">read 10 pages</label>
+        <fieldset class="border border-gray-200 rounded-lg p-4">
+          <legend class="text-sm font-semibold text-gray-700 px-1">
+            daily checklist
+          </legend>
+          <div class="space-y-1 mt-2">
+            <div class="habit-row flex items-center gap-2 rounded-md px-2 py-1">
+              <input
+                type="checkbox"
+                id="habit1"
+                class="h-4 w-4 rounded border-gray-300 accent-indigo-600"
+              />
+              <label for="habit1" class="text-sm">15 min stretch</label>
+            </div>
+
+            <div class="habit-row flex items-center gap-2 rounded-md px-2 py-1">
+              <input
+                type="checkbox"
+                id="habit2"
+                class="h-4 w-4 rounded border-gray-300 accent-indigo-600"
+              />
+              <label for="habit2" class="text-sm">read 10 pages</label>
+            </div>
+
+            <div class="habit-row flex items-center gap-2 rounded-md px-2 py-1">
+              <input
+                type="checkbox"
+                id="habit3"
+                class="h-4 w-4 rounded border-gray-300 accent-indigo-600"
+              />
+              <label for="habit3" class="text-sm">exercise</label>
+            </div>
+
+            <div class="habit-row flex items-center gap-2 rounded-md px-2 py-1">
+              <input
+                type="checkbox"
+                id="habit4"
+                class="h-4 w-4 rounded border-gray-300 accent-indigo-600"
+              />
+              <label for="habit4" class="text-sm">1 leetcode problem</label>
+            </div>
+
+            <div class="habit-row flex items-center gap-2 rounded-md px-2 py-1">
+              <input
+                type="checkbox"
+                id="habit5"
+                class="h-4 w-4 rounded border-gray-300 accent-indigo-600"
+              />
+              <label for="habit5" class="text-sm"
+                >practice motion graphics</label
+              >
+            </div>
+          </div>
+        </fieldset>
+
+        <div>
+          <label
+            for="rating"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >day rating (0-10)</label
+          >
+          <div class="flex items-center gap-3">
+            <input
+              type="number"
+              id="rating"
+              min="0"
+              max="10"
+              step="0.1"
+              value="6.7"
+              class="w-24 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <span
+              id="rating-output"
+              class="text-lg font-semibold text-indigo-600"
+              >6.7</span
+            >
+          </div>
         </div>
 
-        <div class="habit-row">
-          <input type="checkbox" id="habit3" />
-          <label for="habit3">exercise</label>
-        </div>
+        <button type="submit" class="bg-indigo-600 text-white py-2 rounded-md font-medium w-full hover:bg-indigo-700 transition-colors">
+          submit
+        </button>
+      </form>
 
-        <div class="habit-row">
-          <input type="checkbox" id="habit4" />
-          <label for="habit4">1 leetcode problem</label>
-        </div>
-
-        <div class="habit-row">
-          <input type="checkbox" id="habit5" />
-          <label for="habit5">practice motion graphics</label>
-        </div>
-      </fieldset>
-
-      <label for="rating">day rating (0-10)</label>
-      <input
-        type="number"
-        id="rating"
-        min="0"
-        max="10"
-        step="0.1"
-        value="6.7"
-      />
-      <span id="rating-output">6.7</span>
-
-      <button type="submit">submit entry</button>
-    </form>
-
-    <section>
-      <h2>past entries</h2>
-      <ul id="entries-list"></ul>
-    </section>
+      <section class="mt-10">
+        <h2 class="text-xl font-semibold mb-3">past entries</h2>
+        <ul id="entries-list" class="space-y-2"></ul>
+      </section>
+    </div>
 
     <script src="{{ url_for('static', filename='app.js') }}"></script>
   </body>
