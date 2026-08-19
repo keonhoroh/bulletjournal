@@ -197,8 +197,8 @@ Tasks:
 - [x] 9.1 Set up the Tailwind build toolchain (`npm init`, install Tailwind, a config file, an input/output CSS file) and wire Flask to serve the generated CSS.
 - [x] 9.2 Redesign `index.html` (the journal page) with Tailwind utility classes: layout, spacing, typography, a real visual hierarchy.
 - [x] 9.3 Redesign `login.html` and `signup.html` to match, and add a link between them (the gap we noticed after section 8).
-- [ ] 9.4 Make the layout responsive: confirm it looks right at a narrow (phone) width and a wide (desktop) width using the browser's device toolbar.
-- [ ] 9.5 Polish pass: favicon, page titles, consistent spacing/colors across all three pages, loading/empty states for the entries list.
+- [x] 9.4 Make the layout responsive: confirm it looks right at a narrow (phone) width and a wide (desktop) width using the browser's device toolbar.
+- [x] 9.5 Polish pass: favicon, page titles, consistent spacing/colors across all three pages, loading/empty states for the entries list.
 
 **10. New features (edit/delete entries, ratings chart)**
 Extend the MVP's feature set past pure create/read: let users edit or delete
@@ -207,8 +207,8 @@ a past entry, and see their ratings over time as a simple chart.
 delete another, and see a real chart update to reflect the change.
 
 Tasks:
-- [ ] 10.1 Add `PUT`/`DELETE /api/entries/<id>` routes (scoped to the logged-in user, same pattern as existing routes); confirm with `curl`.
-- [ ] 10.2 Add edit/delete controls to the frontend entries list, wired to those routes with `fetch()`.
+- [x] 10.1 Add `PUT`/`DELETE /api/entries/<id>` routes (scoped to the logged-in user, same pattern as existing routes); confirm with `curl`.
+- [x] 10.2 Add edit/delete controls to the frontend entries list, wired to those routes with `fetch()`.
 - [ ] 10.3 Add a simple chart (ratings over time) to the journal page, populated from the same `/api/entries` data already being fetched.
 - [ ] 10.4 Write pytest tests for the new edit/delete routes, including that a user can't edit/delete another user's entry (same pattern as section 7).
 - [ ] 10.5 Redeploy to Render (push to GitHub, confirm auto-deploy); full deliverable check on the live URL.

@@ -16,15 +16,71 @@ habitCheckboxes.forEach(function (checkbox) {
 });
 
 async function loadEntries() {
+  const list = document.getElementById("entries-list");
+  list.innerHTML = '<li class="text-sm text-gray-400">loading entries...</li>';
+
   const response = await fetch("/api/entries");
   const entries = await response.json();
 
-  const list = document.getElementById("entries-list");
   list.innerHTML = "";
+
+  if (entries.length === 0) {
+    const empty = document.createElement("li");
+    empty.className = "bg-white rounded-lg shadow-sm px-4 py-3 text-sm text-gray-400";
+    empty.textContent = "no recorded entries yet";
+    list.appendChild(empty);
+    return;
+  }
+
   entries.forEach(function (entry) {
     const item = document.createElement("li");
-    item.className = "bg-white rounded-lg shadow-sm px-4 py-3 text-sm";
-    item.textContent = `${entry.date}: ${entry.highlight} (${entry.rating})`;
+    item.className = "bg-white rounded-lg shadow-sm px-4 py-3 text-sm flex items-center justify-between gap-3";
+
+    const text = document.createElement("span");
+    text.textContent = `${entry.date}: ${entry.highlight} (${entry.rating})`;
+    item.appendChild(text);
+
+    const buttons = document.createElement("div");
+    buttons.className = "flex gap-3 shrink-0";
+
+    const editButton = document.createElement("button");
+    editButton.textContent = "edit";
+    editButton.className = "text-indigo-600 hover:text-indigo-800 text-xs font-medium";
+    editButton.addEventListener("click", async function () {
+      const newHighlight = prompt("edit highlight:", entry.highlight);
+      if (newHighlight === null) return;
+      const newRating = prompt("edit rating (0-10):", entry.rating);
+      if (newRating === null) return;
+
+      await fetch(`/api/entries/${entry.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          date: entry.date,
+          highlight: newHighlight,
+          rating: parseFloat(newRating),
+          habits: entry.habits,
+        }),
+      });
+      await loadEntries();
+    });
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "delete";
+    deleteButton.className = "text-red-500 hover:text-red-700 text-xs font-medium";
+    deleteButton.addEventListener("click", async function () {
+      if (!confirm("delete this entry?")) return;
+      
+      await fetch(`/api/entries/${entry.id}`, {
+        method: "DELETE",
+      });
+      await loadEntries();
+    });
+
+    buttons.appendChild(editButton);
+    buttons.appendChild(deleteButton);
+    item.appendChild(buttons);
+
     list.appendChild(item);
   });
 }

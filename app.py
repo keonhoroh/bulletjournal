@@ -93,18 +93,52 @@ def entries():
         )
         db.session.add(new_entry)
         db.session.commit()
-        return jsonify(data), 201
+        return jsonify({
+            "id": new_entry.id,
+            "date": new_entry.date,
+            "highlight": new_entry.highlight,
+            "rating": new_entry.rating,
+            "habits": new_entry.habits
+        }), 201
 
     all_entries = Entry.query.filter_by(user_id=current_user.id).all()
     result = []
     for entry in all_entries:
         result.append({
+            "id": entry.id,
             "date": entry.date,
             "highlight": entry.highlight,
             "rating": entry.rating,
             "habits": entry.habits
         })
     return jsonify(result)
+
+
+@app.route("/api/entries/<int:entry_id>", methods=["PUT", "DELETE"])
+@login_required
+def entry_detail(entry_id):
+    entry = Entry.query.filter_by(id=entry_id, user_id=current_user.id).first()
+    if entry is None:
+        return jsonify({"error": "not found"}), 404
+
+    if request.method == "DELETE":
+        db.session.delete(entry)
+        db.session.commit()
+        return "", 204
+
+    data = request.get_json()
+    entry.date = data["date"]
+    entry.highlight = data["highlight"]
+    entry.rating = data["rating"]
+    entry.habits = data["habits"]
+    db.session.commit()
+    return jsonify({
+        "id": entry.id,
+        "date": entry.date,
+        "highlight": entry.highlight,
+        "rating": entry.rating,
+        "habits": entry.habits
+    })
 
 
 if __name__ == "__main__":
