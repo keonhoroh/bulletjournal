@@ -15,12 +15,31 @@ habitCheckboxes.forEach(function (checkbox) {
   });
 });
 
+function renderRatingsChart(entries) {
+  const chart = document.getElementById("ratings-chart");
+  chart.innerHTML = "";
+
+  const sorted = [...entries].sort(function (a, b) {
+    return a.date.localeCompare(b.date);
+  });
+
+  sorted.forEach(function (entry) {
+    const bar = document.createElement("div");
+    bar.className = "flex-1 min-w-[8px] bg-indigo-400 rounded-t hover:bg-indigo-600 transition-colors";
+    bar.style.height = `${entry.rating * 10}%`;
+    bar.title = `${entry.date}: ${entry.rating}`;
+    chart.appendChild(bar);
+  });
+}
+
 async function loadEntries() {
   const list = document.getElementById("entries-list");
   list.innerHTML = '<li class="text-sm text-gray-400">loading entries...</li>';
 
   const response = await fetch("/api/entries");
   const entries = await response.json();
+
+  renderRatingsChart(entries);
 
   list.innerHTML = "";
 

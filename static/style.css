@@ -12,6 +12,7 @@
     --color-red-700: oklch(50.5% 0.213 27.518);
     --color-indigo-50: oklch(96.2% 0.018 272.314);
     --color-indigo-300: oklch(78.5% 0.115 274.713);
+    --color-indigo-400: oklch(67.3% 0.182 276.935);
     --color-indigo-500: oklch(58.5% 0.233 277.117);
     --color-indigo-600: oklch(51.1% 0.262 276.966);
     --color-indigo-700: oklch(45.7% 0.24 277.023);
@@ -210,6 +211,24 @@
   .static {
     position: static;
   }
+  .container {
+    width: 100%;
+    @media (width >= 40rem) {
+      max-width: 40rem;
+    }
+    @media (width >= 48rem) {
+      max-width: 48rem;
+    }
+    @media (width >= 64rem) {
+      max-width: 64rem;
+    }
+    @media (width >= 80rem) {
+      max-width: 80rem;
+    }
+    @media (width >= 96rem) {
+      max-width: 96rem;
+    }
+  }
   .mx-4 {
     margin-inline: calc(var(--spacing) * 4);
   }
@@ -243,11 +262,17 @@
   .flex {
     display: flex;
   }
+  .inline {
+    display: inline;
+  }
   .table {
     display: table;
   }
   .h-4 {
     height: calc(var(--spacing) * 4);
+  }
+  .h-32 {
+    height: calc(var(--spacing) * 32);
   }
   .min-h-screen {
     min-height: 100vh;
@@ -267,17 +292,29 @@
   .max-w-md {
     max-width: var(--container-md);
   }
+  .min-w-\[8px\] {
+    min-width: 8px;
+  }
+  .flex-1 {
+    flex: 1;
+  }
   .shrink-0 {
     flex-shrink: 0;
   }
   .items-center {
     align-items: center;
   }
+  .items-end {
+    align-items: flex-end;
+  }
   .justify-between {
     justify-content: space-between;
   }
   .justify-center {
     justify-content: center;
+  }
+  .gap-1 {
+    gap: var(--spacing);
   }
   .gap-2 {
     gap: calc(var(--spacing) * 2);
@@ -305,6 +342,9 @@
     margin-block-start: calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));
     margin-block-end: calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)));
   }
+  .overflow-x-auto {
+    overflow-x: auto;
+  }
   .rounded {
     border-radius: 0.25rem;
   }
@@ -316,6 +356,10 @@
   }
   .rounded-xl {
     border-radius: var(--radius-xl);
+  }
+  .rounded-t {
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
   }
   .border {
     border-style: var(--tw-border-style);
@@ -329,6 +373,9 @@
   }
   .bg-gray-50 {
     background-color: var(--color-gray-50);
+  }
+  .bg-indigo-400 {
+    background-color: var(--color-indigo-400);
   }
   .bg-indigo-600 {
     background-color: var(--color-indigo-600);
@@ -445,6 +492,9 @@
     transition-duration: var(--tw-duration, var(--default-transition-duration));
   }
   @media (hover: hover) {
+    .hover\:bg-indigo-600:hover {
+      background-color: var(--color-indigo-600);
+    }
     .hover\:bg-indigo-700:hover {
       background-color: var(--color-indigo-700);
     }

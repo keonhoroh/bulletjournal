@@ -209,6 +209,6 @@ delete another, and see a real chart update to reflect the change.
 Tasks:
 - [x] 10.1 Add `PUT`/`DELETE /api/entries/<id>` routes (scoped to the logged-in user, same pattern as existing routes); confirm with `curl`.
 - [x] 10.2 Add edit/delete controls to the frontend entries list, wired to those routes with `fetch()`.
-- [ ] 10.3 Add a simple chart (ratings over time) to the journal page, populated from the same `/api/entries` data already being fetched.
-- [ ] 10.4 Write pytest tests for the new edit/delete routes, including that a user can't edit/delete another user's entry (same pattern as section 7).
+- [x] 10.3 Add a simple chart (ratings over time) to the journal page, populated from the same `/api/entries` data already being fetched.
+- [x] 10.4 Write pytest tests for the new edit/delete routes, including that a user can't edit/delete another user's entry (same pattern as section 7).
 - [ ] 10.5 Redeploy to Render (push to GitHub, confirm auto-deploy); full deliverable check on the live URL.
