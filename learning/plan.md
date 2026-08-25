@@ -64,6 +64,17 @@ isn't meant to be used live, so the app will run under **Gunicorn**, the
 standard production server for Flask apps — this is a real, common piece of
 the puzzle, not an extra.
 
+### 6. Media storage: Cloudinary (section 13)
+Render's disk is "ephemeral" — anything saved straight to the server's own
+hard drive gets wiped on every redeploy/restart, so uploaded photos/videos
+can't just live next to the app the way `static/style.css` does. Cloudinary
+is a free-tier cloud storage service built for exactly this: the app uploads
+a file to Cloudinary's API, gets back a permanent URL, and only that URL
+string gets stored in Postgres (same `entry_id`-scoped-row pattern already
+used everywhere else). Chosen over storing file bytes directly in Postgres,
+which is a real anti-pattern (bloats the database, slows backups) even
+though it would avoid adding a third-party service.
+
 ---
 
 ## Sectioned build plan
@@ -211,4 +222,61 @@ Tasks:
 - [x] 10.2 Add edit/delete controls to the frontend entries list, wired to those routes with `fetch()`.
 - [x] 10.3 Add a simple chart (ratings over time) to the journal page, populated from the same `/api/entries` data already being fetched.
 - [x] 10.4 Write pytest tests for the new edit/delete routes, including that a user can't edit/delete another user's entry (same pattern as section 7).
-- [ ] 10.5 Redeploy to Render (push to GitHub, confirm auto-deploy); full deliverable check on the live URL.
+- [x] 10.5 Redeploy to Render (push to GitHub, confirm auto-deploy); full deliverable check on the live URL.
+
+**11. Small polish (identity, rating UX, habit progress)**
+Three small, self-contained UX improvements requested directly: show who's
+logged in, make the day-rating feel less like "type a number, see the same
+number echoed back," and give the habit checklist a visible sense of
+progress as boxes get checked.
+*Deliverable:* logged-in username visible on the journal page; a redesigned,
+more satisfying rating input; a progress bar that fills as habits are
+checked.
+
+Tasks:
+- [x] 11.1 Show the logged-in username on the journal page (a small backend piece — passing `current_user` into the template — plus a bit of HTML).
+- [x] 11.2 Brainstorm rating-UX concepts together (e.g. emoji/face that changes with the value, a star row, a color-shifting slider) and pick one.
+- [x] 11.3 Implement the chosen rating redesign, replacing the current number-input-plus-readout.
+- [x] 11.4 Add a completion progress bar above/near the habit checkboxes that fills in live as boxes are checked (pure JS + Tailwind, no backend change).
+- [x] 11.5 Fresh reload confirms all three: username visible, new rating UI, live-filling progress bar.
+
+**12. GitHub-style ratings calendar**
+Replace both the existing bar chart *and* the plain past-entries list with
+one GitHub-contributions-style monthly calendar: one cell per day, colored by
+that day's rating, clicking a cell opens a popup with that day's full entry.
+*Deliverable:* the journal page shows a calendar grid instead of a bar chart
+and a list; clicking any colored cell pops up that day's real entry data.
+
+Tasks:
+- [ ] 12.1 Design the color scale (which rating values map to which shades) and the calendar's data shape (a lookup from date → entry, built from the same `/api/entries` data already fetched).
+- [ ] 12.2 Render the calendar grid in HTML/JS: one cell per day of the current month, colored (or left blank/gray) based on whether an entry exists for that date.
+- [ ] 12.3 Add click handling: clicking a cell with an entry opens a popup/modal showing that day's highlight, rating, and habits (reusing existing edit/delete where it makes sense).
+- [ ] 12.4 Remove the old `#ratings-chart` bar chart and the past-entries `<ul>` list, now fully superseded by the calendar + popup.
+- [ ] 12.5 Fresh reload confirms the calendar renders correctly and popups show correct real data for several different days.
+
+**13. Photo/video attachments (Cloudinary)**
+Let users attach photos/videos to a day's entry, stored via Cloudinary (see
+locked decision 6) rather than on Render's ephemeral disk.
+*Deliverable:* from an entry's popup, upload a photo or video, reload the
+page, reopen that entry's popup, and the media is still there — proof it
+persisted in real cloud storage, not just the current browser session.
+
+Tasks:
+- [ ] 13.1 Create a free Cloudinary account; install its SDK; store the API credentials as environment variables (same secrets pattern as `DATABASE_URL`/`SECRET_KEY` from section 8), never in code.
+- [ ] 13.2 Add a new table/column linking uploaded media URLs to an `Entry` (an entry can have zero or more media items).
+- [ ] 13.3 Add a file-upload input to the entry popup, and a Flask route that receives the upload, forwards it to Cloudinary, and saves the returned URL against that entry.
+- [ ] 13.4 Display attached photos/videos inside the entry popup.
+- [ ] 13.5 Set the same Cloudinary environment variables in Render's dashboard; redeploy; confirm an uploaded photo survives a redeploy on the live URL.
+
+**14. Freeform daily pages**
+Let users create an empty freeform text page at any time, automatically
+attached to *today's* entry (locked decision above), for open-ended writing
+beyond the structured highlight/habits/rating fields.
+*Deliverable:* create a freeform page from anywhere in the app; it shows up
+attached to today's entry in its popup, persisted in the database.
+
+Tasks:
+- [ ] 14.1 Add a `Page` model (text content, timestamp, `entry_id` foreign key) and its table.
+- [ ] 14.2 Add a "new page" control (button + textarea) reachable at any time, and a route that saves it — finding or creating today's `Entry` first if it doesn't exist yet, then attaching the page to it.
+- [ ] 14.3 Show any attached freeform pages inside today's (and any past day's) entry popup.
+- [ ] 14.4 Fresh reload confirms a newly written page shows up correctly attached to today's entry, and old pages still show up on their original days.

@@ -2,18 +2,104 @@ const ratingInput = document.getElementById("rating");
 const ratingOutput = document.getElementById("rating-output");
 const highlightInput = document.getElementById("highlight");
 
-ratingInput.addEventListener("input", function () {
-  ratingOutput.textContent = ratingInput.value;
+const ratingDial = document.getElementById("rating-dial");
+const ratingArc = document.getElementById("rating-arc");
+
+const DIAL_RADIUS = 70;
+const DIAL_CIRCUMFERENCE = 2 * Math.PI * DIAL_RADIUS;
+ratingArc.style.strokeDasharray = DIAL_CIRCUMFERENCE;
+
+function setRating(value) {
+  value = Math.min(10, Math.max(0, value));
+  value = Math.round(value * 10) / 10;
+
+  const percent = value / 10;
+  ratingArc.style.strokeDashoffset = DIAL_CIRCUMFERENCE * (1 - percent);
+
+  ratingInput.value = value;
+  ratingOutput.textContent = value;
+}
+
+function angleFromCenter(clientX, clientY) {
+  const rect = ratingDial.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+
+  const dx = clientX - centerX;
+  const dy = clientY - centerY;
+
+  // atan2 measures clockwise from the 3 o'clock position; +90 shifts
+  // the reference point to 12 o'clock, where our dial starts at 0.
+  let angleDegrees = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+  if (angleDegrees < 0) angleDegrees += 360;
+
+  return angleDegrees;
+}
+
+function angleToRating(clientX, clientY) {
+  return (angleFromCenter(clientX, clientY) / 360) * 10;
+}
+
+let draggingRating = false;
+let lastAngle = null;
+
+ratingDial.addEventListener("pointerdown", function (event) {
+  draggingRating = true;
+  lastAngle = angleFromCenter(event.clientX, event.clientY);
+  setRating(angleToRating(event.clientX, event.clientY));
 });
 
+document.addEventListener("pointermove", function (event) {
+  if (!draggingRating) return;
+
+  const angle = angleFromCenter(event.clientX, event.clientY);
+  let delta = angle - lastAngle;
+
+  // a jump bigger than half a turn almost certainly means we crossed
+  // the 0/360 seam, not that the mouse really leapt most of the way
+  // around the circle in one frame
+  if (delta > 180) delta -= 360;
+  if (delta < -180) delta += 360;
+
+  setRating(parseFloat(ratingInput.value) + (delta / 360) * 10);
+  lastAngle = angle;
+});
+
+document.addEventListener("pointerup", function () {
+  draggingRating = false;
+});
+
+setRating(parseFloat(ratingInput.value));
+
 const habitCheckboxes = document.querySelectorAll(".habit-row input[type='checkbox']");
+const habitProgressBar = document.getElementById("habit-progress-bar");
+const habitProgressLabel = document.getElementById("habit-progress-label");
+
+function updateHabitProgress() {
+  const total = habitCheckboxes.length;
+
+  // TODO(you): count how many checkboxes in habitCheckboxes are currently
+  // checked. habitCheckboxes is a NodeList, so you can turn it into a real
+  // array with Array.from(habitCheckboxes) and then use an array method to
+  // count how many have .checked === true.
+  const checked = Array.from(habitCheckboxes).filter(checkbox => checkbox.checked).length;
+
+  // TODO(you): turn `checked` and `total` into a percentage (0-100).
+  const percent = total === 0 ? 0 : (checked / total) * 100;
+
+  habitProgressBar.style.width = `${percent}%`;
+  habitProgressLabel.textContent = `${checked}/${total}`;
+}
 
 habitCheckboxes.forEach(function (checkbox) {
   checkbox.addEventListener("change", function () {
     const row = checkbox.closest(".habit-row");
     row.classList.toggle("checked", checkbox.checked);
+    updateHabitProgress();
   });
 });
+
+updateHabitProgress();
 
 function renderRatingsChart(entries) {
   const chart = document.getElementById("ratings-chart");
