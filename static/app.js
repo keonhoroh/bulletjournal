@@ -78,13 +78,8 @@ const habitProgressLabel = document.getElementById("habit-progress-label");
 function updateHabitProgress() {
   const total = habitCheckboxes.length;
 
-  // TODO(you): count how many checkboxes in habitCheckboxes are currently
-  // checked. habitCheckboxes is a NodeList, so you can turn it into a real
-  // array with Array.from(habitCheckboxes) and then use an array method to
-  // count how many have .checked === true.
   const checked = Array.from(habitCheckboxes).filter(checkbox => checkbox.checked).length;
 
-  // TODO(you): turn `checked` and `total` into a percentage (0-100).
   const percent = total === 0 ? 0 : (checked / total) * 100;
 
   habitProgressBar.style.width = `${percent}%`;
@@ -100,6 +95,65 @@ habitCheckboxes.forEach(function (checkbox) {
 });
 
 updateHabitProgress();
+
+function ratingToColorClass(rating) {
+  // TODO(you): using the locked color scale, return the right Tailwind
+  // background class for a day's rating:
+  //   no entry (rating is undefined) -> "bg-gray-100"
+  //   0-2   -> "bg-indigo-100"
+  //   2-4   -> "bg-indigo-200"
+  //   4-6   -> "bg-indigo-400"
+  //   6-8   -> "bg-indigo-600"
+  //   8-10  -> "bg-indigo-800"
+  // Handle the "no entry" case first, then a chain of if/else (or similar).
+  if (rating === undefined) {
+    return "bg-gray-100";
+  } else if (rating < 2) {
+    return "bg-indigo-100";
+  } else if (rating < 4) {
+    return "bg-indigo-200";
+  } else if (rating < 6) {
+    return "bg-indigo-400";
+  } else if (rating < 8) {
+    return "bg-indigo-600";
+  } else {
+    return "bg-indigo-800";
+  }
+}
+
+function renderRatingsCalendar(entries) {
+  const entriesByDate = {};
+
+  entries.forEach(function (entry) {
+    entriesByDate[entry.date] = entry;
+  });
+
+  const calendar = document.getElementById("ratings-calendar");
+  calendar.innerHTML = "";
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+
+  // which weekday (0 = Sunday) the 1st of this month falls on
+  const firstWeekday = new Date(year, month, 1).getDay();
+  // "day 0" of next month rolls back to the last real day of this month
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  for (let i = 0; i < firstWeekday; i++) {
+    calendar.appendChild(document.createElement("div"));
+  }
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    const entry = entriesByDate[dateString];
+
+    const cell = document.createElement("div");
+    cell.className = `aspect-square rounded ${ratingToColorClass(entry ? entry.rating : undefined)}`;
+    cell.title = entry ? `${dateString}: ${entry.rating}` : dateString;
+    calendar.appendChild(cell);
+  }
+}
 
 function renderRatingsChart(entries) {
   const chart = document.getElementById("ratings-chart");
@@ -125,6 +179,7 @@ async function loadEntries() {
   const response = await fetch("/api/entries");
   const entries = await response.json();
 
+  renderRatingsCalendar(entries);
   renderRatingsChart(entries);
 
   list.innerHTML = "";
@@ -192,6 +247,17 @@ async function loadEntries() {
 
 loadEntries();
 
+function getTodayDateString() {
+  const today = new Date();
+  const year = today.getFullYear();
+
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+
+  const day = String(today.getDate()).padStart(2, "0"); 
+
+  return `${year}-${month}-${day}`;
+}
+
 const journalForm = document.getElementById("journal-form");
 
 journalForm.addEventListener("submit", async function (event) {
@@ -206,7 +272,7 @@ journalForm.addEventListener("submit", async function (event) {
   });
 
   const newEntry = {
-    date: "2026-08-11",
+    date: getTodayDateString(),
     highlight: highlightInput.value,
     rating: parseFloat(ratingInput.value),
     habits: habits,

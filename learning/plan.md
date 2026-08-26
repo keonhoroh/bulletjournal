@@ -248,8 +248,8 @@ that day's rating, clicking a cell opens a popup with that day's full entry.
 and a list; clicking any colored cell pops up that day's real entry data.
 
 Tasks:
-- [ ] 12.1 Design the color scale (which rating values map to which shades) and the calendar's data shape (a lookup from date → entry, built from the same `/api/entries` data already fetched).
-- [ ] 12.2 Render the calendar grid in HTML/JS: one cell per day of the current month, colored (or left blank/gray) based on whether an entry exists for that date.
+- [x] 12.1 Design the color scale (which rating values map to which shades) and the calendar's data shape (a lookup from date → entry, built from the same `/api/entries` data already fetched). Locked: indigo intensity scale (no entry = gray-100; ratings 0–2/2–4/4–6/6–8/8–10 = indigo-100/200/400/600/800). Along the way, found and fixed a real pre-existing bug blocking this feature: the submit handler hardcoded `date: "2026-08-11"` on every entry since section 4 instead of using the real date — fixed via a new `getTodayDateString()`; existing wrongly-dated entries are left as-is per user decision.
+- [x] 12.2 Render the calendar grid in HTML/JS: one cell per day of the current month, colored (or left blank/gray) based on whether an entry exists for that date. Confirmed live; sized down from an initial too-large stretch-to-fill-card look to a compact, centered ~192px grid (`w-48` container ÷ `grid-cols-7` sets column width, `aspect-square` keeps cells square).
 - [ ] 12.3 Add click handling: clicking a cell with an entry opens a popup/modal showing that day's highlight, rating, and habits (reusing existing edit/delete where it makes sense).
 - [ ] 12.4 Remove the old `#ratings-chart` bar chart and the past-entries `<ul>` list, now fully superseded by the calendar + popup.
 - [ ] 12.5 Fresh reload confirms the calendar renders correctly and popups show correct real data for several different days.
@@ -280,3 +280,22 @@ Tasks:
 - [ ] 14.2 Add a "new page" control (button + textarea) reachable at any time, and a route that saves it — finding or creating today's `Entry` first if it doesn't exist yet, then attaching the page to it.
 - [ ] 14.3 Show any attached freeform pages inside today's (and any past day's) entry popup.
 - [ ] 14.4 Fresh reload confirms a newly written page shows up correctly attached to today's entry, and old pages still show up on their original days.
+
+**15. Editable habit checklist (up to 5)**
+Replace the 5 hardcoded habits in `index.html` with a real per-user `Habit`
+table, editable inline on the journal page: rename, delete, or add habits
+(capped at 5). Past entries keep whatever habit text was checked at the time
+(they already store a JSON snapshot, not a live link, so this is automatic).
+Existing users are pre-seeded with today's 5 hardcoded habits via a one-time
+migration, so nothing changes for them until they choose to edit.
+*Deliverable:* from the live journal page, rename a habit, delete one, add a
+new one back, and confirm the checklist + progress bar all reflect the
+change — with older entries' recorded habit text unaffected.
+
+Tasks:
+- [ ] 15.1 Add a `Habit` model (`label`, `position`, `user_id` foreign key) and its table; write a one-time migration that creates 5 `Habit` rows (today's hardcoded labels) for each existing user.
+- [ ] 15.2 Add `GET`/`POST`/`PUT`/`DELETE /api/habits` routes, scoped to `current_user`, with `POST` rejecting a 6th habit.
+- [ ] 15.3 Replace the hardcoded habit-row HTML with rows rendered dynamically in `app.js` from a `GET /api/habits` fetch, keeping the existing checkbox/progress-bar logic working against the now-dynamic list.
+- [ ] 15.4 Add inline rename and delete controls to each habit row, wired to `PUT`/`DELETE /api/habits/<id>`.
+- [ ] 15.5 Add an "add habit" control that's hidden once 5 habits exist, wired to `POST /api/habits`.
+- [ ] 15.6 Fresh reload + full check: add, rename, and delete a habit; confirm the checklist and progress bar reflect the new list correctly, and that an older entry's recorded habit text is unchanged.
