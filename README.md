@@ -66,7 +66,7 @@ automatically) so they never touch real local data.
 ## About this project
 
 Built as a learning project by a data engineer moving into software
-engineering — the goal was to go from a static HTML mockup to a deployed,
+engineering. My goal was to go from a static HTML mockup to a deployed,
 multi-user, database-backed app while actually understanding each layer
 (frontend, backend, database, auth, deployment) along the way, not just
 assembling boilerplate.
