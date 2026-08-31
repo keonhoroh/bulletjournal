@@ -75,6 +75,32 @@ used everywhere else). Chosen over storing file bytes directly in Postgres,
 which is a real anti-pattern (bloats the database, slows backups) even
 though it would avoid adding a third-party service.
 
+### 7. Entries are immutable once submitted (2026-08-30)
+Two real bugs surfaced during section 12 prep: the app let you submit
+multiple entries for the same day (no uniqueness check), and had no way to
+backfill a missed past day at all (the date was silently hardcoded). Fixing
+both together raised a real product question — once submitting for an
+already-logged day is possible, should that silently *update* the existing
+entry, or be blocked? Decided: **blocked**. Entries are a permanent
+historical record once submitted — no edits, no deletes, ever, mirroring
+real journaling/mood-tracking apps (e.g. Daylio) that intentionally lock
+past entries so the log can't be quietly rewritten later. Consequences:
+- `POST /api/entries` now checks for an existing entry on that user+date and
+  rejects (`409`) instead of creating a duplicate or updating in place.
+- The `PUT`/`DELETE /api/entries/<id>` route from section 10.1 was removed
+  entirely — the guarantee is enforced at the real API boundary, not just
+  hidden in the UI, since a working backend route left in place would let
+  anyone bypass a UI-only restriction via `curl`.
+- The frontend's edit/delete buttons (section 10.2) were removed; the
+  entries list is now read-only.
+- A new `<input type="date">` field lets you pick any past day (capped at
+  today via `max`) to backfill a genuinely missing entry. Picking a date
+  that already has an entry pre-fills the form with that day's real data
+  and **locks** every field (disabled inputs, disabled submit button, the
+  rating dial gated via `pointer-events-none`) — both to show you what was
+  logged and to make accidentally overwriting it structurally impossible,
+  not just discouraged.
+
 ---
 
 ## Sectioned build plan
@@ -218,10 +244,10 @@ a past entry, and see their ratings over time as a simple chart.
 delete another, and see a real chart update to reflect the change.
 
 Tasks:
-- [x] 10.1 Add `PUT`/`DELETE /api/entries/<id>` routes (scoped to the logged-in user, same pattern as existing routes); confirm with `curl`.
-- [x] 10.2 Add edit/delete controls to the frontend entries list, wired to those routes with `fetch()`.
+- [x] 10.1 ~~Add `PUT`/`DELETE /api/entries/<id>` routes~~ — **reversed**, see locked decision 7: entries are now immutable, so this route was removed entirely.
+- [x] 10.2 ~~Add edit/delete controls to the frontend entries list~~ — **reversed**, same reason; the entries list is now read-only.
 - [x] 10.3 Add a simple chart (ratings over time) to the journal page, populated from the same `/api/entries` data already being fetched.
-- [x] 10.4 Write pytest tests for the new edit/delete routes, including that a user can't edit/delete another user's entry (same pattern as section 7).
+- [x] 10.4 ~~Write pytest tests for the new edit/delete routes~~ — **reversed**; replaced by `test_duplicate_entry_for_same_date_is_rejected` (locked decision 7).
 - [x] 10.5 Redeploy to Render (push to GitHub, confirm auto-deploy); full deliverable check on the live URL.
 
 **11. Small polish (identity, rating UX, habit progress)**
@@ -250,8 +276,8 @@ and a list; clicking any colored cell pops up that day's real entry data.
 Tasks:
 - [x] 12.1 Design the color scale (which rating values map to which shades) and the calendar's data shape (a lookup from date → entry, built from the same `/api/entries` data already fetched). Locked: indigo intensity scale (no entry = gray-100; ratings 0–2/2–4/4–6/6–8/8–10 = indigo-100/200/400/600/800). Along the way, found and fixed a real pre-existing bug blocking this feature: the submit handler hardcoded `date: "2026-08-11"` on every entry since section 4 instead of using the real date — fixed via a new `getTodayDateString()`; existing wrongly-dated entries are left as-is per user decision.
 - [x] 12.2 Render the calendar grid in HTML/JS: one cell per day of the current month, colored (or left blank/gray) based on whether an entry exists for that date. Confirmed live; sized down from an initial too-large stretch-to-fill-card look to a compact, centered ~192px grid (`w-48` container ÷ `grid-cols-7` sets column width, `aspect-square` keeps cells square).
-- [ ] 12.3 Add click handling: clicking a cell with an entry opens a popup/modal showing that day's highlight, rating, and habits (reusing existing edit/delete where it makes sense).
-- [ ] 12.4 Remove the old `#ratings-chart` bar chart and the past-entries `<ul>` list, now fully superseded by the calendar + popup.
+- [x] 12.3 Add click handling: clicking a cell with an entry opens a popup/modal showing that day's highlight, rating, and habits (reusing existing edit/delete where it makes sense).
+- [x] 12.4 Remove the old `#ratings-chart` bar chart and the past-entries `<ul>` list, now fully superseded by the calendar + popup.
 - [ ] 12.5 Fresh reload confirms the calendar renders correctly and popups show correct real data for several different days.
 
 **13. Photo/video attachments (Cloudinary)**

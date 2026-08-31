@@ -16,17 +16,20 @@ login_manager = LoginManager(app)
 login_manager.login_view = "login"
 
 
+# a registered account; UserMixin plugs this into Flask-Login's session handling
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False, unique=True)
     password_hash = db.Column(db.String(200), nullable=False)
 
 
+# tells Flask-Login how to turn a stored session id back into a real User
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+# one day's journal entry: highlight, rating, habits, and which user it belongs to
 class Entry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.String(10), nullable=False)
@@ -36,12 +39,14 @@ class Entry(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
 
+# serves the main journal page; @login_required blocks it for anyone not signed in
 @app.route("/")
 @login_required
 def home():
     return render_template("index.html")
 
 
+# ends the current session and sends the user back to the login-gated home page
 @app.route("/logout")
 @login_required
 def logout():
@@ -49,6 +54,7 @@ def logout():
     return redirect(url_for("home"))
 
 
+# creates a new account with a hashed password; the raw password is never stored
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
@@ -64,6 +70,7 @@ def signup():
     return render_template("signup.html")
 
 
+# verifies credentials and starts a logged-in session via Flask-Login
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -79,11 +86,20 @@ def login():
     return render_template("login.html")
 
 
+# GET returns this user's own entries; POST creates one, rejecting a second
+# submission for a date that's already logged (entries are immutable)
 @app.route("/api/entries", methods=["GET", "POST"])
 @login_required
 def entries():
     if request.method == "POST":
         data = request.get_json()
+
+        # one entry per user per day, enforced here rather than relying on the frontend
+        existing_entry = Entry.query.filter_by(user_id=current_user.id, date=data["date"]).first()
+
+        if existing_entry:
+            return jsonify({"error": "an entry for this date already exists and can't be changed"}), 409
+
         new_entry = Entry(
             date = data["date"],
             highlight = data["highlight"],
@@ -112,33 +128,6 @@ def entries():
             "habits": entry.habits
         })
     return jsonify(result)
-
-
-@app.route("/api/entries/<int:entry_id>", methods=["PUT", "DELETE"])
-@login_required
-def entry_detail(entry_id):
-    entry = Entry.query.filter_by(id=entry_id, user_id=current_user.id).first()
-    if entry is None:
-        return jsonify({"error": "not found"}), 404
-
-    if request.method == "DELETE":
-        db.session.delete(entry)
-        db.session.commit()
-        return "", 204
-
-    data = request.get_json()
-    entry.date = data["date"]
-    entry.highlight = data["highlight"]
-    entry.rating = data["rating"]
-    entry.habits = data["habits"]
-    db.session.commit()
-    return jsonify({
-        "id": entry.id,
-        "date": entry.date,
-        "highlight": entry.highlight,
-        "rating": entry.rating,
-        "habits": entry.habits
-    })
 
 
 if __name__ == "__main__":

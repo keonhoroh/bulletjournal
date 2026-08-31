@@ -1,6 +1,12 @@
 const ratingInput = document.getElementById("rating");
 const ratingOutput = document.getElementById("rating-output");
 const highlightInput = document.getElementById("highlight");
+const entryDateInput = document.getElementById("entry-date");
+let allEntries = [];
+
+// can't log a day that hasn't happened yet
+entryDateInput.max = getTodayDateString();
+entryDateInput.value = getTodayDateString();
 
 const ratingDial = document.getElementById("rating-dial");
 const ratingArc = document.getElementById("rating-arc");
@@ -9,6 +15,7 @@ const DIAL_RADIUS = 70;
 const DIAL_CIRCUMFERENCE = 2 * Math.PI * DIAL_RADIUS;
 ratingArc.style.strokeDasharray = DIAL_CIRCUMFERENCE;
 
+// clamps/rounds a rating value and updates both the dial's fill and the hidden input
 function setRating(value) {
   value = Math.min(10, Math.max(0, value));
   value = Math.round(value * 10) / 10;
@@ -20,6 +27,7 @@ function setRating(value) {
   ratingOutput.textContent = value;
 }
 
+// converts a pointer's screen position into an angle (degrees) around the dial's center
 function angleFromCenter(clientX, clientY) {
   const rect = ratingDial.getBoundingClientRect();
   const centerX = rect.left + rect.width / 2;
@@ -36,6 +44,7 @@ function angleFromCenter(clientX, clientY) {
   return angleDegrees;
 }
 
+// converts an angle straight into a 0-10 rating; only used for the initial click position
 function angleToRating(clientX, clientY) {
   return (angleFromCenter(clientX, clientY) / 360) * 10;
 }
@@ -43,12 +52,14 @@ function angleToRating(clientX, clientY) {
 let draggingRating = false;
 let lastAngle = null;
 
+// starts a drag on the dial and jumps the rating to wherever the click landed
 ratingDial.addEventListener("pointerdown", function (event) {
   draggingRating = true;
   lastAngle = angleFromCenter(event.clientX, event.clientY);
   setRating(angleToRating(event.clientX, event.clientY));
 });
 
+// while dragging, advances the rating by the angle moved since the last frame
 document.addEventListener("pointermove", function (event) {
   if (!draggingRating) return;
 
@@ -75,6 +86,7 @@ const habitCheckboxes = document.querySelectorAll(".habit-row input[type='checkb
 const habitProgressBar = document.getElementById("habit-progress-bar");
 const habitProgressLabel = document.getElementById("habit-progress-label");
 
+// recounts checked habits and updates the progress bar's width + "x/5" label
 function updateHabitProgress() {
   const total = habitCheckboxes.length;
 
@@ -96,16 +108,8 @@ habitCheckboxes.forEach(function (checkbox) {
 
 updateHabitProgress();
 
+// maps a rating to a calendar-cell background shade using the locked indigo scale
 function ratingToColorClass(rating) {
-  // TODO(you): using the locked color scale, return the right Tailwind
-  // background class for a day's rating:
-  //   no entry (rating is undefined) -> "bg-gray-100"
-  //   0-2   -> "bg-indigo-100"
-  //   2-4   -> "bg-indigo-200"
-  //   4-6   -> "bg-indigo-400"
-  //   6-8   -> "bg-indigo-600"
-  //   8-10  -> "bg-indigo-800"
-  // Handle the "no entry" case first, then a chain of if/else (or similar).
   if (rating === undefined) {
     return "bg-gray-100";
   } else if (rating < 2) {
@@ -121,6 +125,51 @@ function ratingToColorClass(rating) {
   }
 }
 
+// indigo-600 and indigo-800 are dark enough that gray text stops being
+// readable, so those two ratings get white text instead
+function ratingToTextClass(rating) {
+  if (rating !== undefined && rating >= 6) {
+    return "text-white";
+  }
+  return "text-gray-600";
+}
+
+const entryModal = document.getElementById("entry-modal");
+const entryModalDate = document.getElementById("entry-modal-date");
+const entryModalHighlight = document.getElementById("entry-modal-highlight");
+const entryModalRating = document.getElementById("entry-modal-rating");
+const entryModalHabits = document.getElementById("entry-modal-habits");
+const entryModalClose = document.getElementById("entry-modal-close");
+
+// fills in and reveals the day-detail popup for a given entry
+function openEntryModal(entry) {
+  entryModalDate.textContent = entry.date;
+  entryModalHighlight.textContent = entry.highlight;
+  entryModalRating.textContent = entry.rating;
+
+  entryModalHabits.innerHTML = "";
+  entry.habits.forEach(function (habit) {
+    const item = document.createElement("li");
+    item.textContent = `✓ ${habit}`;
+    entryModalHabits.appendChild(item);
+  });
+
+  entryModal.classList.remove("hidden");
+}
+
+function closeEntryModal() {
+  entryModal.classList.add("hidden");
+}
+
+entryModalClose.addEventListener("click", closeEntryModal);
+
+// closes on a backdrop click, but not on a click inside the card itself
+entryModal.addEventListener("click", function (event) {
+  if (event.target === entryModal) closeEntryModal();
+});
+
+// builds the current month's grid: blank cells to align the 1st on its real
+// weekday, then one shaded, clickable cell per day
 function renderRatingsCalendar(entries) {
   const entriesByDate = {};
 
@@ -149,104 +198,78 @@ function renderRatingsCalendar(entries) {
     const entry = entriesByDate[dateString];
 
     const cell = document.createElement("div");
-    cell.className = `aspect-square rounded ${ratingToColorClass(entry ? entry.rating : undefined)}`;
+    cell.className = `aspect-square rounded flex items-center justify-center text-[10px] font-medium ${ratingToColorClass(entry ? entry.rating : undefined)} ${ratingToTextClass(entry ? entry.rating : undefined)}`;
+    cell.textContent = day;
     cell.title = entry ? `${dateString}: ${entry.rating}` : dateString;
+
+    // only days with a real entry are clickable
+    if (entry) {
+      cell.classList.add("cursor-pointer");
+      cell.addEventListener("click", function () {
+        openEntryModal(entry);
+      });
+    }
+
     calendar.appendChild(cell);
   }
 }
 
-function renderRatingsChart(entries) {
-  const chart = document.getElementById("ratings-chart");
-  chart.innerHTML = "";
+const submitButton = document.querySelector("#journal-form button[type='submit']");
+const entryLockedMessage = document.getElementById("entry-locked-message");
 
-  const sorted = [...entries].sort(function (a, b) {
-    return a.date.localeCompare(b.date);
-  });
+// disables/enables the whole entry form; used to lock it once the picked
+// date already has a saved (and therefore immutable) entry
+function setFormLocked(locked) {
+  highlightInput.disabled = locked;
+  submitButton.disabled = locked;
+  entryLockedMessage.classList.toggle("hidden", !locked);
 
-  sorted.forEach(function (entry) {
-    const bar = document.createElement("div");
-    bar.className = "flex-1 min-w-[8px] bg-indigo-400 rounded-t hover:bg-indigo-600 transition-colors";
-    bar.style.height = `${entry.rating * 10}%`;
-    bar.title = `${entry.date}: ${entry.rating}`;
-    chart.appendChild(bar);
+  // pointer-events-none stops pointerdown from ever firing on the dial,
+  // so no extra JS flag is needed to block dragging while locked
+  ratingDial.classList.toggle("pointer-events-none", locked);
+  ratingDial.classList.toggle("opacity-50", locked);
+
+  habitCheckboxes.forEach(function (checkbox) {
+    checkbox.disabled = locked;
   });
 }
 
-async function loadEntries() {
-  const list = document.getElementById("entries-list");
-  list.innerHTML = '<li class="text-sm text-gray-400">loading entries...</li>';
+// fills the form with a date's saved entry if one exists, and locks it so it can't be resubmitted
+function loadFormForDate(dateString) {
+  const entry = allEntries.find(function (e) {
+    return e.date === dateString;
+  });
 
+  highlightInput.value = entry ? entry.highlight : "";
+  setRating(entry ? entry.rating : 0);
+
+  habitCheckboxes.forEach(function (checkbox) {
+    const label = checkbox.closest(".habit-row").querySelector("label");
+    checkbox.checked = entry ? entry.habits.includes(label.textContent) : false;
+    checkbox.dispatchEvent(new Event("change"));
+  });
+
+  setFormLocked(!!entry);
+}
+
+// fetches this user's entries from the API and re-renders the form + calendar from that data
+async function loadEntries() {
   const response = await fetch("/api/entries");
   const entries = await response.json();
 
+  allEntries = entries;
+  loadFormForDate(entryDateInput.value);
+
   renderRatingsCalendar(entries);
-  renderRatingsChart(entries);
-
-  list.innerHTML = "";
-
-  if (entries.length === 0) {
-    const empty = document.createElement("li");
-    empty.className = "bg-white rounded-lg shadow-sm px-4 py-3 text-sm text-gray-400";
-    empty.textContent = "no recorded entries yet";
-    list.appendChild(empty);
-    return;
-  }
-
-  entries.forEach(function (entry) {
-    const item = document.createElement("li");
-    item.className = "bg-white rounded-lg shadow-sm px-4 py-3 text-sm flex items-center justify-between gap-3";
-
-    const text = document.createElement("span");
-    text.textContent = `${entry.date}: ${entry.highlight} (${entry.rating})`;
-    item.appendChild(text);
-
-    const buttons = document.createElement("div");
-    buttons.className = "flex gap-3 shrink-0";
-
-    const editButton = document.createElement("button");
-    editButton.textContent = "edit";
-    editButton.className = "text-indigo-600 hover:text-indigo-800 text-xs font-medium";
-    editButton.addEventListener("click", async function () {
-      const newHighlight = prompt("edit highlight:", entry.highlight);
-      if (newHighlight === null) return;
-      const newRating = prompt("edit rating (0-10):", entry.rating);
-      if (newRating === null) return;
-
-      await fetch(`/api/entries/${entry.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          date: entry.date,
-          highlight: newHighlight,
-          rating: parseFloat(newRating),
-          habits: entry.habits,
-        }),
-      });
-      await loadEntries();
-    });
-
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "delete";
-    deleteButton.className = "text-red-500 hover:text-red-700 text-xs font-medium";
-    deleteButton.addEventListener("click", async function () {
-      if (!confirm("delete this entry?")) return;
-      
-      await fetch(`/api/entries/${entry.id}`, {
-        method: "DELETE",
-      });
-      await loadEntries();
-    });
-
-    buttons.appendChild(editButton);
-    buttons.appendChild(deleteButton);
-    item.appendChild(buttons);
-
-    list.appendChild(item);
-  });
 }
 
 loadEntries();
 
+entryDateInput.addEventListener("change", function () {
+  loadFormForDate(entryDateInput.value);
+});
+
+// builds today's date as "YYYY-MM-DD" in the browser's local timezone
 function getTodayDateString() {
   const today = new Date();
   const year = today.getFullYear();
@@ -260,6 +283,7 @@ function getTodayDateString() {
 
 const journalForm = document.getElementById("journal-form");
 
+// collects the form's current values and POSTs a new entry, then reloads everything
 journalForm.addEventListener("submit", async function (event) {
   event.preventDefault();
 
@@ -272,7 +296,7 @@ journalForm.addEventListener("submit", async function (event) {
   });
 
   const newEntry = {
-    date: getTodayDateString(),
+    date: entryDateInput.value,
     highlight: highlightInput.value,
     rating: parseFloat(ratingInput.value),
     habits: habits,

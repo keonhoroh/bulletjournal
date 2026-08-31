@@ -8,6 +8,8 @@ import pytest
 from app import app, db
 
 
+# gives each test a fresh Flask test client backed by empty, real tables in
+# the dedicated test database, torn down again after the test finishes
 @pytest.fixture
 def client():
     app.config["TESTING"] = True

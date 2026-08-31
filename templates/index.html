@@ -32,6 +32,19 @@
       >
         <div>
           <label
+            for="entry-date"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >date</label
+          >
+          <input
+            type="date"
+            id="entry-date"
+            class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+
+        <div>
+          <label
             for="highlight"
             class="block text-sm font-medium text-gray-700 mb-1"
             >today's highlight</label
@@ -40,7 +53,7 @@
             type="text"
             id="highlight"
             value="watched new spider-man with friends"
-            class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 disabled:text-gray-400"
           />
         </div>
 
@@ -150,9 +163,16 @@
           </div>
         </div>
 
+        <p
+          id="entry-locked-message"
+          class="hidden text-xs text-gray-400 text-center"
+        >
+          already logged — entries can't be changed once submitted
+        </p>
+
         <button
           type="submit"
-          class="bg-indigo-600 text-white py-2 rounded-md font-medium w-full hover:bg-indigo-700 transition-colors"
+          class="bg-indigo-600 text-white py-2 rounded-md font-medium w-full hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           submit
         </button>
@@ -168,18 +188,32 @@
         </div>
       </section>
 
-      <section class="mt-10">
-        <h2 class="text-xl font-semibold mb-3">ratings over time</h2>
-        <div
-          id="ratings-chart"
-          class="bg-white rounded-xl shadow-sm p-4 flex items-end gap-1 h-32 overflow-x-auto"
-        ></div>
-      </section>
+    </div>
 
-      <section class="mt-10">
-        <h2 class="text-xl font-semibold mb-3">past entries</h2>
-        <ul id="entries-list" class="space-y-2"></ul>
-      </section>
+    <div
+      id="entry-modal"
+      class="hidden fixed inset-0 bg-black/50 flex items-center justify-center px-4 z-50"
+    >
+      <div class="bg-white rounded-xl shadow-lg max-w-sm w-full p-6 relative">
+        <button
+          id="entry-modal-close"
+          type="button"
+          aria-label="close"
+          class="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+        >
+          ✕
+        </button>
+        <h3 id="entry-modal-date" class="text-lg font-semibold mb-3"></h3>
+        <p id="entry-modal-highlight" class="text-sm text-gray-700 mb-4"></p>
+        <div class="flex items-center justify-between text-sm mb-3">
+          <span class="text-gray-500">rating</span>
+          <span id="entry-modal-rating" class="font-semibold text-indigo-600"></span>
+        </div>
+        <div>
+          <span class="text-sm text-gray-500">habits</span>
+          <ul id="entry-modal-habits" class="mt-1 space-y-1 text-sm"></ul>
+        </div>
+      </div>
     </div>
 
     <script src="{{ url_for('static', filename='app.js') }}"></script>
