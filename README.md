@@ -2,10 +2,8 @@
 
 A minimal daily journal app: log a one-line highlight, track up to 5 daily
 habits, and rate your day from 0–10. Entries are permanent once submitted —
-no editing or deleting — so the log stays an honest historical record, the
-same way apps like Daylio intentionally lock past entries.
-
-**Live app:** [https://bulletjournal.onrender.com/](https://bulletjournal.onrender.com/)
+no editing or deleting — so the log stays an honest historical record. Inspired
+by the way I have been journaling since March of 2024.
 
 ## Features
 
