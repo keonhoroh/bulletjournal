@@ -278,7 +278,21 @@ Tasks:
 - [x] 12.2 Render the calendar grid in HTML/JS: one cell per day of the current month, colored (or left blank/gray) based on whether an entry exists for that date. Confirmed live; sized down from an initial too-large stretch-to-fill-card look to a compact, centered ~192px grid (`w-48` container ÷ `grid-cols-7` sets column width, `aspect-square` keeps cells square).
 - [x] 12.3 Add click handling: clicking a cell with an entry opens a popup/modal showing that day's highlight, rating, and habits (reusing existing edit/delete where it makes sense).
 - [x] 12.4 Remove the old `#ratings-chart` bar chart and the past-entries `<ul>` list, now fully superseded by the calendar + popup.
-- [ ] 12.5 Fresh reload confirms the calendar renders correctly and popups show correct real data for several different days.
+- [x] 12.5 Fresh reload confirms the calendar renders correctly and popups show correct real data for several different days.
+
+**12a. Calendar month navigation**
+The ratings calendar only ever renders the current real-world month, with no
+way to look back at a previous month's ratings. Add prev/next controls so
+past months are actually reachable.
+*Deliverable:* from the journal page, step the calendar back to a past month
+and forward again to the current month, with correct days/colors/popups at
+every step.
+
+Tasks:
+- [x] 12a.1 Track a "viewed year/month" in JS state (separate from today's real date), defaulting to the current month; add prev/next buttons above the calendar grid with a label showing the viewed month/year.
+- [x] 12a.2 Update `renderRatingsCalendar` to build its grid from the viewed year/month instead of always reading `new Date()`, and wire the prev/next buttons to change that state and re-render.
+- [x] 12a.3 Disable/hide the next button once the viewed month reaches the current real month, so navigation can't go into the future. Implemented in `renderRatingsCalendar` (compares `viewedYear`/`viewedMonth` against `new Date()` on every render, not just on click, so page load and both buttons all stay in sync). Hit and self-fixed two real bugs along the way: a typo (`calenderNextButton`, missing the second "a") that threw a `ReferenceError` and silently broke the whole calendar render, caught via the browser console; and an `if` with no `else`, which meant `.disabled` could only ever be set `true` and never reset back to `false` once you navigated away from the current month — self-diagnosed after being asked to trace which line, if any, ever un-disables the button.
+- [x] 12a.4 Fresh reload confirms: calendar opens on the current month, prev/next correctly show past months' real entries and colors, and forward navigation stops exactly at the current month. Verified live: reload starts on the current month with next disabled, prev walks back correctly, next re-disables exactly on return to the current month.
 
 **13. Photo/video attachments (Cloudinary)**
 Let users attach photos/videos to a day's entry, stored via Cloudinary (see

@@ -4,6 +4,36 @@ const highlightInput = document.getElementById("highlight");
 const entryDateInput = document.getElementById("entry-date");
 let allEntries = [];
 
+let viewedYear = new Date().getFullYear();
+let viewedMonth = new Date().getMonth();
+
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+const calendarMonthLabel = document.getElementById("calendar-month-year-label");
+const calendarPrevButton = document.getElementById("calendar-prev-month");
+const calendarNextButton = document.getElementById("calendar-next-month");
+
+calendarPrevButton.addEventListener("click", function () {
+  viewedMonth--;
+  if (viewedMonth < 0) {
+    viewedMonth = 11;
+    viewedYear--;
+  }
+  renderRatingsCalendar(allEntries);
+});
+
+calendarNextButton.addEventListener("click", function () {
+  viewedMonth++;
+  if (viewedMonth > 11) {
+    viewedMonth = 0;
+    viewedYear++;
+  }
+  renderRatingsCalendar(allEntries);
+});
+
 // can't log a day that hasn't happened yet
 entryDateInput.max = getTodayDateString();
 entryDateInput.value = getTodayDateString();
@@ -180,21 +210,27 @@ function renderRatingsCalendar(entries) {
   const calendar = document.getElementById("ratings-calendar");
   calendar.innerHTML = "";
 
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
-
   // which weekday (0 = Sunday) the 1st of this month falls on
-  const firstWeekday = new Date(year, month, 1).getDay();
+  const firstWeekday = new Date(viewedYear, viewedMonth, 1).getDay();
   // "day 0" of next month rolls back to the last real day of this month
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInMonth = new Date(viewedYear, viewedMonth + 1, 0).getDate();
+  // set the month/year label above the calendar
+  calendarMonthLabel.textContent = `${MONTH_NAMES[viewedMonth]} ${viewedYear}`;
+
+  const currMonth = new Date().getMonth();
+  const currYear = new Date().getFullYear();
+  if (viewedMonth === currMonth && viewedYear === currYear) {
+    calendarNextButton.disabled = true;
+  } else {
+    calendarNextButton.disabled = false;
+  }
 
   for (let i = 0; i < firstWeekday; i++) {
     calendar.appendChild(document.createElement("div"));
   }
 
   for (let day = 1; day <= daysInMonth; day++) {
-    const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    const dateString = `${viewedYear}-${String(viewedMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
     const entry = entriesByDate[dateString];
 
     const cell = document.createElement("div");
