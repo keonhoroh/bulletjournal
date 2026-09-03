@@ -5,6 +5,8 @@ A minimal daily journal app: log a one-line highlight, track up to 5 daily
 habits, and rate your day from 0–10. Entries are permanent once submitted —
 no editing or deleting — so the log stays an honest historical record.
 
+**Live app:** https://bulletjournal.onrender.com
+
 ## Features
 
 - Sign up / log in — each account's journal is private
