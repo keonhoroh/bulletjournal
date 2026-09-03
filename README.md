@@ -1,9 +1,9 @@
 # bullet journal
+Inspired by the way I have been journaling since March of 2024.
 
 A minimal daily journal app: log a one-line highlight, track up to 5 daily
 habits, and rate your day from 0–10. Entries are permanent once submitted —
-no editing or deleting — so the log stays an honest historical record. Inspired
-by the way I have been journaling since March of 2024.
+no editing or deleting — so the log stays an honest historical record.
 
 ## Features
 
