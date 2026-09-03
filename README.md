@@ -2,18 +2,18 @@
 Inspired by the way I have been journaling since March of 2024.
 
 A minimal daily journal app: log a one-line highlight, track up to 5 daily
-habits, and rate your day from 0–10. Entries are permanent once submitted —
-no editing or deleting — so the log stays an honest historical record.
+habits, and rate your day from 0–10. Entries are permanent once submitted to
+maintain an honest historical record.
 
 **Live app:** https://bulletjournal.onrender.com
 
 ## Features
 
 - Sign up / log in — each account's journal is private
-- Log today's highlight, up to 5 habits, and a 0–10 day rating (via a
+- Log today's highlight, track up to 5 habits, and rate your day (0 - 10) (via a
   draggable circular dial)
 - Pick any past date to backfill a missed entry; once a date has an entry
-  it's locked read-only, so nothing already logged can be silently rewritten
+  it's locked read-only, so nothing already logged can be rewritten or edited
 - A GitHub-contributions-style monthly calendar, one cell per day, shaded by
   that day's rating — click a colored cell to pop open that day's full entry
 - A live progress bar as habit checkboxes are checked off
